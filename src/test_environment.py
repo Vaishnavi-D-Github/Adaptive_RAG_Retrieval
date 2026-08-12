@@ -1,0 +1,1 @@
+print("Adaptive Enterprise RAG environment is working!")

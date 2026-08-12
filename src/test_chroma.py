@@ -1,0 +1,10 @@
+import chromadb
+
+client = chromadb.PersistentClient(path="./chroma_db")
+
+collection = client.get_or_create_collection(
+    name="enterprise_documents"
+)
+
+print("ChromaDB is working!")
+print("Collection:", collection.name)
