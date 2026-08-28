@@ -7,7 +7,7 @@ CHROMA_DIR = "./chroma_db"
 COLLECTION_NAME = "enterprise_documents"
 
 EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"
-LLM_MODEL_NAME = "llama3.2:latest"
+LLM_MODEL_NAME = "qwen3:8b"
 
 
 def load_embedding_model():
@@ -80,20 +80,24 @@ Page: {metadata['page']}
 def generate_answer(question, context):
 
     prompt = f"""
-Answer the question using only the information in the context.
+You are an enterprise document question-answering assistant.
 
-If the context does not contain sufficient evidence to answer the
-question, respond exactly:
+Answer the question using ONLY the retrieved context.
 
-"The available documents do not contain enough information to answer this question."
+Rules:
 
-Question:
+1. Use only information contained in the context.
+2. Do not use outside knowledge.
+3. Do not invent facts.
+4. If the context contains sufficient evidence, answer the question directly.
+
+QUESTION:
 {question}
 
-Context:
+RETRIEVED CONTEXT:
 {context}
 
-Answer:
+ANSWER:
 """
 
     response = ollama.chat(
@@ -104,9 +108,10 @@ Answer:
                 "content": prompt
             }
         ],
+        think = False,
         options={
             "temperature": 0,
-            "num_predict": 256
+            "num_predict": 512
         }
     )
 
@@ -131,7 +136,7 @@ if __name__ == "__main__":
 
     print("\nRetrieving documents...")
 
-    K = 5
+    K = 1
 
     results = retrieve_documents(
         question,
