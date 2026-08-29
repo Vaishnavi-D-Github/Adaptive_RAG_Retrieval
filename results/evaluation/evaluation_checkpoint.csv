@@ -1,0 +1,14 @@
+﻿ID,K,Question,Source_Document,Source_Page,Model,Num_Retrieved_Chunks,Expected_Document_Count,Expected_Page_Count,Matched_Document_Count,Matched_Page_Count,Document_Coverage,Page_Coverage,Source_Hit,First_Relevant_Rank,MRR,nDCG,Faithfulness,Answer_Relevancy,Context_Relevance,Prompt_Tokens,Generated_Tokens,Total_Tokens,Retrieval_Time_Seconds,Generation_Time_Seconds,Evaluation_Time_Seconds,Evaluation_Status,Evaluation_Attempts,Evaluation_Error,Raw_Evaluator_Response
+EQ001,1,What three types of support do federal agencies rely on for cybersecurity incident response?,GAO-24-105658,PDF p. 2,Qwen/Qwen3-8B,1,1,1,0,0,0.0,0.0,0,,0.0,0.0,1.0,1.0,1.0,403,80,483,0.0167842410000957,11.25502700800007,90.43789720535278,success,1,,"{""faithfulness"": 1.0, ""answer_relevancy"": 1.0, ""context_relevance"": 1.0}"
+EQ001,2,What three types of support do federal agencies rely on for cybersecurity incident response?,GAO-24-105658,PDF p. 2,Qwen/Qwen3-8B,2,1,1,0,0,0.0,0.0,0,,0.0,0.0,1.0,1.0,1.0,941,79,1020,0.0167842410000957,8.876050194999607,80.27865600585938,success,1,,"{""faithfulness"": 1.0, ""answer_relevancy"": 1.0, ""context_relevance"": 1.0}"
+EQ001,3,What three types of support do federal agencies rely on for cybersecurity incident response?,GAO-24-105658,PDF p. 2,Qwen/Qwen3-8B,3,1,1,0,0,0.0,0.0,0,,0.0,0.0,1.0,1.0,1.0,1137,77,1214,0.0167842410000957,9.179978415999813,54.004491090774536,success,1,,"{""faithfulness"": 1.0, ""answer_relevancy"": 1.0, ""context_relevance"": 1.0}"
+EQ001,4,What three types of support do federal agencies rely on for cybersecurity incident response?,GAO-24-105658,PDF p. 2,Qwen/Qwen3-8B,4,1,1,0,0,0.0,0.0,0,,0.0,0.0,1.0,1.0,1.0,1679,77,1756,0.0167842410000957,10.03145023900015,96.94681143760681,success,1,,"{
+  ""faithfulness"": 1.0,
+  ""answer_relevancy"": 1.0,
+  ""context_relevance"": 1.0
+}"
+EQ001,5,What three types of support do federal agencies rely on for cybersecurity incident response?,GAO-24-105658,PDF p. 2,Qwen/Qwen3-8B,5,1,1,0,0,0.0,0.0,0,,0.0,0.0,1.0,1.0,1.0,1910,77,1987,0.0167842410000957,10.06655385699969,81.86778521537781,success,1,,"{
+  ""faithfulness"": 1.0,
+  ""answer_relevancy"": 1.0,
+  ""context_relevance"": 1.0
+}"
