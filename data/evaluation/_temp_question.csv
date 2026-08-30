@@ -1,0 +1,2 @@
+Selection_Order,ID,user_input,reference,Primary_Category,Secondary_Category,Complexity,Answerable,Question_Rationale,Source_Document,Source_Page
+30,EQ100,What employee data-retention schedule applies to personnel records and who may approve exceptions?,Not available in the supplied knowledge base,Unanswerable / Out-of-Knowledge,,High,No,Intentional governance question; no organizational personnel-record policy is supplied.,,

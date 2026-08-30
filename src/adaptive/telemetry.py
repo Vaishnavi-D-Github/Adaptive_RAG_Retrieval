@@ -33,6 +33,25 @@ def count_tokens(
     )
 
 
+def _metadata_int(metadata: Optional[Dict[str, Any]], key: str) -> Optional[int]:
+    if not metadata:
+        return None
+    value = metadata.get(key)
+    if value is None:
+        return None
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _metadata_duration_ms(metadata: Optional[Dict[str, Any]], key: str) -> Optional[float]:
+    value = _metadata_int(metadata, key)
+    if value is None:
+        return None
+    return value / 1_000_000
+
+
 def build_telemetry(
     *,
     query: str,
@@ -50,25 +69,59 @@ def build_telemetry(
     optimization_time_ms: float = 0.0,
     generation_time_ms: float = 0.0,
     generated_text: str = "",
+    generation_metadata: Optional[Dict[str, Any]] = None,
     verification: Optional[
         VerificationResult
     ] = None,
     fallback_used: bool = False,
 ) -> Dict[str, Any]:
 
-    prompt_tokens = count_tokens(
-        tokenizer,
-        prompt,
+    native_prompt_tokens = _metadata_int(
+        generation_metadata,
+        "prompt_eval_count",
     )
 
-    generated_tokens = count_tokens(
-        tokenizer,
-        generated_text,
+    native_generated_tokens = _metadata_int(
+        generation_metadata,
+        "eval_count",
+    )
+
+    prompt_tokens = (
+        native_prompt_tokens
+        if native_prompt_tokens is not None
+        else count_tokens(
+            tokenizer,
+            prompt,
+        )
+    )
+
+    generated_tokens = (
+        native_generated_tokens
+        if native_generated_tokens is not None
+        else count_tokens(
+            tokenizer,
+            generated_text,
+        )
     )
 
     total_tokens = (
         prompt_tokens
         + generated_tokens
+    )
+
+    ollama_prompt_eval_duration_ms = _metadata_duration_ms(
+        generation_metadata,
+        "prompt_eval_duration",
+    )
+
+    ollama_eval_duration_ms = _metadata_duration_ms(
+        generation_metadata,
+        "eval_duration",
+    )
+
+    ollama_total_duration_ms = _metadata_duration_ms(
+        generation_metadata,
+        "total_duration",
     )
 
 
@@ -220,6 +273,10 @@ def build_telemetry(
         "total_tokens": (
             total_tokens
         ),
+
+        "ollama_prompt_eval_duration_ms": ollama_prompt_eval_duration_ms,
+        "ollama_eval_duration_ms": ollama_eval_duration_ms,
+        "ollama_total_duration_ms": ollama_total_duration_ms,
 
         "verification_passed": (
             verification_passed

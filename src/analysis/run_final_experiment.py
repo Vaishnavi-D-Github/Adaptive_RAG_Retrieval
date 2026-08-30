@@ -16,8 +16,9 @@ OUTPUT_COLUMNS = [
     "ID", "Question", "Mode", "Initial_K", "Final_K", "Iterations", "K_Escalated",
     "Verification_Performed", "Verification_Result", "Query_Features", "Prediction_Confidence",
     "Chunks_Retrieved", "Chunks_Used", "Prompt_Tokens", "Generated_Tokens", "Total_Tokens",
-    "Retrieval_Latency", "Verification_Latency", "Optimization_Latency", "Generation_Latency",
-    "Total_Latency", "Generated_Answer", "Retrieved_Sources", "Faithfulness", "Answer_Relevancy",
+    "Retrieval_Latency_ms", "Verification_Latency_ms", "Optimization_Latency_ms",
+    "Generation_Latency_ms", "Total_Latency_ms", "Ollama_Prompt_Eval_Duration_ms", "Ollama_Eval_Duration_ms",
+    "Ollama_Total_Duration_ms", "Generated_Answer", "Retrieved_Sources", "Faithfulness", "Answer_Relevancy",
     "Context_Relevance", "Evaluation_Status",
 ]
 
@@ -40,9 +41,13 @@ def _row(question_id: str, question: str, mode: str, result) -> dict:
         "Query_Features": _serialise(payload["query_features"]), "Prediction_Confidence": payload["predicted_k_confidence"],
         "Chunks_Retrieved": payload["num_retrieved_chunks"], "Chunks_Used": payload["num_chunks_used"],
         "Prompt_Tokens": payload["prompt_tokens"], "Generated_Tokens": payload["generated_tokens"], "Total_Tokens": payload["total_tokens"],
-        "Retrieval_Latency": payload["retrieval_time_ms"], "Verification_Latency": payload["verification_time_ms"],
-        "Optimization_Latency": payload["optimization_time_ms"], "Generation_Latency": payload["generation_time_ms"],
-        "Total_Latency": payload["total_latency_ms"], "Generated_Answer": answer,
+        "Retrieval_Latency_ms": payload["retrieval_time_ms"], "Verification_Latency_ms": payload["verification_time_ms"],
+        "Optimization_Latency_ms": payload["optimization_time_ms"], "Generation_Latency_ms": payload["generation_time_ms"],
+        "Total_Latency_ms": payload["total_latency_ms"],
+        "Ollama_Prompt_Eval_Duration_ms": payload.get("ollama_prompt_eval_duration_ms"),
+        "Ollama_Eval_Duration_ms": payload.get("ollama_eval_duration_ms"),
+        "Ollama_Total_Duration_ms": payload.get("ollama_total_duration_ms"),
+        "Generated_Answer": answer,
         "Retrieved_Sources": _serialise(sources), "Faithfulness": None, "Answer_Relevancy": None,
         "Context_Relevance": None, "Evaluation_Status": "pending",
     }

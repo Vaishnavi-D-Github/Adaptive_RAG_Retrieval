@@ -112,7 +112,9 @@ def create_app(adaptive_pipeline, fixed_pipeline, *, collection=None, embedding_
 def main():
     logging.basicConfig(level=os.getenv("AE_RAG_LOG_LEVEL", "INFO"))
     from runtime import load_runtime
-    adaptive, fixed, collection, embedding_model = load_runtime()
+    adaptive, fixed, collection, embedding_model = load_runtime(
+        enable_telemetry_db=True
+    )
     host, port = os.getenv("AE_RAG_HOST", "127.0.0.1"), int(os.getenv("AE_RAG_PORT", "8000"))
     print(f"Adaptive Enterprise RAG is running at http://{host}:{port}")
     print("Development accounts: employee@example.com / change-me-employee; hr@example.com / change-me-hr")

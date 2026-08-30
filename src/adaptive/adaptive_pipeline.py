@@ -32,6 +32,7 @@ class AdaptivePipeline:
         generator=None,
         tokenizer=None,
         max_k=10,
+        telemetry_store=None,
     ):
 
         self.retrieval_controller = (
@@ -51,6 +52,8 @@ class AdaptivePipeline:
         self.tokenizer = tokenizer
 
         self.max_k = max_k
+
+        self.telemetry_store = telemetry_store
 
 
         # -----------------------------------------------------
@@ -89,7 +92,7 @@ class AdaptivePipeline:
 
         if self.generator is None:
 
-            return ""
+            return "", 0.0, {}
 
         start = time.perf_counter()
 
@@ -119,9 +122,10 @@ class AdaptivePipeline:
             self.generator
         ):
 
-            text = self.generator(
+            response = self.generator(
                 prompt
             )
+            text = str(response)
 
         else:
 
@@ -136,8 +140,13 @@ class AdaptivePipeline:
             - start
         ) * 1000
 
+        generation_metadata = getattr(
+            response,
+            "ollama_metadata",
+            {},
+        )
 
-        return str(text), elapsed_ms
+        return str(text), elapsed_ms, generation_metadata
 
 
     def run(
@@ -322,10 +331,11 @@ class AdaptivePipeline:
         generated_text = ""
 
         generation_time_ms = 0.0
+        generation_metadata = {}
 
         if generate:
 
-            generated_text, generation_time_ms = (
+            generated_text, generation_time_ms, generation_metadata = (
                 self._generate(
                     prompt
                 )
@@ -374,6 +384,9 @@ class AdaptivePipeline:
             generated_text=(
                 generated_text
             ),
+            generation_metadata=(
+                generation_metadata
+            ),
 
             verification=verification,
 
@@ -386,6 +399,23 @@ class AdaptivePipeline:
         telemetry["policy_mode"] = (
             self.policy_mode
         )
+
+        # -----------------------------------------------------
+        # OPTIONAL MYSQL TELEMETRY PERSISTENCE
+        # -----------------------------------------------------
+
+        if self.telemetry_store is not None:
+            try:
+                self.telemetry_store.save_run(
+                    telemetry,
+                    mode="adaptive",
+                    run_type="production",
+                )
+            except Exception as exc:
+                print(
+                    "[WARNING] MySQL telemetry "
+                    f"persistence failed: {exc}"
+                )
 
 
         return AdaptiveResult(
