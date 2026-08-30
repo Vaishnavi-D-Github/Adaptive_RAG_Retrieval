@@ -24,6 +24,12 @@
 #   Ollama llama3.2:3b
 # ================================================================
 
+if __name__ != "__main__":
+    # This process invokes an external evaluator and must remain isolated
+    # from ordinary unit-test discovery.
+    import unittest
+    raise unittest.SkipTest("Long-running RAGAS smoke evaluation is opt-in.")
+
 
 # ================================================================
 # IMPORTS

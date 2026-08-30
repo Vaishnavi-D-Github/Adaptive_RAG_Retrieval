@@ -1,0 +1,7 @@
+.venv/
+.ragas_venv/
+__pycache__/
+*.py[cod]
+.env
+data/uploads/
+results/final/

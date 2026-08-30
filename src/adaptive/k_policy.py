@@ -136,18 +136,19 @@ class MLPredictiveKPolicy:
         features: QueryFeatures,
     ) -> RetrievalPlan:
 
-        complexity, complexity_confidence = (
-            self.complexity_model.predict(
-                features.query
-            )
-        )
+        if self.complexity_model is not None and self.complexity_model.trained:
+            complexity, complexity_confidence = self.complexity_model.predict(features.query)
+        else:
+            # This is a transparent query-derived heuristic, not a dataset
+            # annotation. It keeps the initial K decision available at runtime.
+            complexity, complexity_confidence = features.complexity, None
 
-        predicted_k, k_confidence = (
-            self.k_model.predict(
-                features.query,
-                complexity,
-            )
-        )
+        probability_result = None
+        if hasattr(self.k_model, "predict_with_probabilities"):
+            probability_result = self.k_model.predict_with_probabilities(features.query, complexity)
+            predicted_k, k_confidence = probability_result["prediction"], probability_result["confidence"]
+        else:
+            predicted_k, k_confidence = self.k_model.predict(features.query, complexity)
 
         predicted_k = max(
             1,
@@ -193,6 +194,8 @@ class MLPredictiveKPolicy:
             predicted_k=predicted_k,
 
             k_confidence=k_confidence,
+
+            k_probabilities=(probability_result["probabilities"] if probability_result else None),
 
             decision_reason=(
                 "Random Forest complexity "

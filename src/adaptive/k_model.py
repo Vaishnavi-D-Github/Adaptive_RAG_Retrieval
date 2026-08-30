@@ -11,8 +11,20 @@ from .feature_extractor import extract_features
 K_FEATURE_COLUMNS = [
     "query_length",
     "word_count",
+    "unique_word_count",
+    "average_word_length",
     "entity_count",
     "question_count",
+    "question_mark_indicator",
+    "number_indicator",
+    "uppercase_token_count",
+    "starts_with_what",
+    "starts_with_why",
+    "starts_with_how",
+    "starts_with_when",
+    "starts_with_where",
+    "starts_with_who",
+    "starts_with_which",
     "is_comparison",
     "is_procedural",
     "is_policy",
@@ -144,19 +156,23 @@ class KModel:
             fill_value=0,
         )
 
-        prediction = int(
-            self.model.predict(X)[0]
-        )
+        result = self.predict_with_probabilities(query, complexity)
+        return result["prediction"], result["confidence"]
 
-        probabilities = (
-            self.model.predict_proba(X)[0]
-        )
-
-        confidence = float(
-            probabilities.max()
-        )
-
-        return prediction, confidence
+    def predict_with_probabilities(self, query, complexity=None):
+        """Expose interpretable class probabilities for research telemetry/UI."""
+        if not self.trained:
+            raise RuntimeError("K model is not trained.")
+        X = build_k_features([query], [complexity] if complexity is not None else None)
+        X = X.reindex(columns=self.feature_columns, fill_value=0)
+        probabilities = self.model.predict_proba(X)[0]
+        labels = self.model.classes_
+        winner = int(self.model.predict(X)[0])
+        return {
+            "prediction": winner,
+            "confidence": float(probabilities.max()),
+            "probabilities": {str(label): float(value) for label, value in zip(labels, probabilities)},
+        }
 
 
     def feature_importance(self):

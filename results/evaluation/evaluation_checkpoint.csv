@@ -1,13 +1,123 @@
-﻿ID,K,Question,Source_Document,Source_Page,Model,Num_Retrieved_Chunks,Expected_Document_Count,Expected_Page_Count,Matched_Document_Count,Matched_Page_Count,Document_Coverage,Page_Coverage,Source_Hit,First_Relevant_Rank,MRR,nDCG,Faithfulness,Answer_Relevancy,Context_Relevance,Prompt_Tokens,Generated_Tokens,Total_Tokens,Retrieval_Time_Seconds,Generation_Time_Seconds,Evaluation_Time_Seconds,Evaluation_Status,Evaluation_Attempts,Evaluation_Error,Raw_Evaluator_Response
-EQ001,1,What three types of support do federal agencies rely on for cybersecurity incident response?,GAO-24-105658,PDF p. 2,Qwen/Qwen3-8B,1,1,1,0,0,0.0,0.0,0,,0.0,0.0,1.0,1.0,1.0,403,80,483,0.0167842410000957,11.25502700800007,90.43789720535278,success,1,,"{""faithfulness"": 1.0, ""answer_relevancy"": 1.0, ""context_relevance"": 1.0}"
-EQ001,2,What three types of support do federal agencies rely on for cybersecurity incident response?,GAO-24-105658,PDF p. 2,Qwen/Qwen3-8B,2,1,1,0,0,0.0,0.0,0,,0.0,0.0,1.0,1.0,1.0,941,79,1020,0.0167842410000957,8.876050194999607,80.27865600585938,success,1,,"{""faithfulness"": 1.0, ""answer_relevancy"": 1.0, ""context_relevance"": 1.0}"
-EQ001,3,What three types of support do federal agencies rely on for cybersecurity incident response?,GAO-24-105658,PDF p. 2,Qwen/Qwen3-8B,3,1,1,0,0,0.0,0.0,0,,0.0,0.0,1.0,1.0,1.0,1137,77,1214,0.0167842410000957,9.179978415999813,54.004491090774536,success,1,,"{""faithfulness"": 1.0, ""answer_relevancy"": 1.0, ""context_relevance"": 1.0}"
-EQ001,4,What three types of support do federal agencies rely on for cybersecurity incident response?,GAO-24-105658,PDF p. 2,Qwen/Qwen3-8B,4,1,1,0,0,0.0,0.0,0,,0.0,0.0,1.0,1.0,1.0,1679,77,1756,0.0167842410000957,10.03145023900015,96.94681143760681,success,1,,"{
+﻿ID,K,Question,Source_Document,Source_Page,Expected_Source_Pages,Retrieved_Physical_Pages,Page_Coverage_Status,Model,Num_Retrieved_Chunks,Expected_Document_Count,Expected_Page_Count,Matched_Document_Count,Matched_Page_Count,Document_Coverage,Page_Coverage,Source_Hit,First_Relevant_Rank,MRR,nDCG,Faithfulness,Answer_Relevancy,Context_Relevance,Prompt_Tokens,Generated_Tokens,Total_Tokens,Retrieval_Time_Seconds,Generation_Time_Seconds,Evaluation_Time_Seconds,Evaluation_Status,Evaluation_Attempts,Evaluation_Error,Raw_Evaluator_Response
+EQ001,1,What three types of support do federal agencies rely on for cybersecurity incident response?,GAO-24-105658,PDF p. 2,[2],[17],not_computed_pages_not_proven_same_namespace,Qwen/Qwen3-8B,1,1,1,1,,1.0,,1,1,1.0,1.0,1.0,1.0,1.0,403,80,483,0.0167842410000957,11.25502700800007,49.742122411727905,success,1,,"{""faithfulness"": 1.0, ""answer_relevancy"": 1.0, ""context_relevance"": 1.0}"
+EQ001,2,What three types of support do federal agencies rely on for cybersecurity incident response?,GAO-24-105658,PDF p. 2,[2],"[17, 8]",not_computed_pages_not_proven_same_namespace,Qwen/Qwen3-8B,2,1,1,1,,1.0,,1,1,1.0,1.0,1.0,1.0,1.0,941,79,1020,0.0167842410000957,8.876050194999607,106.90511846542358,success,1,,"{""faithfulness"": 1.0, ""answer_relevancy"": 1.0, ""context_relevance"": 1.0}"
+EQ001,3,What three types of support do federal agencies rely on for cybersecurity incident response?,GAO-24-105658,PDF p. 2,[2],"[17, 8, 45]",not_computed_pages_not_proven_same_namespace,Qwen/Qwen3-8B,3,1,1,1,,1.0,,1,1,1.0,1.0,1.0,1.0,1.0,1137,77,1214,0.0167842410000957,9.179978415999813,88.16659259796143,success,1,,"{""faithfulness"": 1.0, ""answer_relevancy"": 1.0, ""context_relevance"": 1.0}"
+EQ001,4,What three types of support do federal agencies rely on for cybersecurity incident response?,GAO-24-105658,PDF p. 2,[2],"[17, 8, 45, 22]",not_computed_pages_not_proven_same_namespace,Qwen/Qwen3-8B,4,1,1,1,,1.0,,1,1,1.0,0.9674679834891693,1.0,1.0,1.0,1679,77,1756,0.0167842410000957,10.03145023900015,156.50104689598083,success,1,,"{
   ""faithfulness"": 1.0,
   ""answer_relevancy"": 1.0,
   ""context_relevance"": 1.0
 }"
-EQ001,5,What three types of support do federal agencies rely on for cybersecurity incident response?,GAO-24-105658,PDF p. 2,Qwen/Qwen3-8B,5,1,1,0,0,0.0,0.0,0,,0.0,0.0,1.0,1.0,1.0,1910,77,1987,0.0167842410000957,10.06655385699969,81.86778521537781,success,1,,"{
+EQ001,5,What three types of support do federal agencies rely on for cybersecurity incident response?,GAO-24-105658,PDF p. 2,[2],"[17, 8, 45, 22, 3]",not_computed_pages_not_proven_same_namespace,Qwen/Qwen3-8B,5,1,1,1,,1.0,,1,1,1.0,0.9558295932317544,1.0,1.0,1.0,1910,77,1987,0.0167842410000957,10.06655385699969,118.91219353675842,success,1,,"{
+  ""faithfulness"": 1.0,
+  ""answer_relevancy"": 1.0,
+  ""context_relevance"": 1.0
+}"
+EQ001,6,What three types of support do federal agencies rely on for cybersecurity incident response?,GAO-24-105658,PDF p. 2,[2],"[17, 8, 45, 22, 3, 18]",not_computed_pages_not_proven_same_namespace,Qwen/Qwen3-8B,6,1,1,1,,1.0,,1,1,1.0,0.9512312000626861,1.0,1.0,1.0,2158,77,2235,0.0167842410000957,10.939211044999864,100.9844582080841,success,1,,"{
+  ""faithfulness"": 1.0,
+  ""answer_relevancy"": 1.0,
+  ""context_relevance"": 1.0
+}"
+EQ001,7,What three types of support do federal agencies rely on for cybersecurity incident response?,GAO-24-105658,PDF p. 2,[2],"[17, 8, 45, 22, 3, 18, 20]",not_computed_pages_not_proven_same_namespace,Qwen/Qwen3-8B,7,1,1,1,,1.0,,1,1,1.0,0.9495662644168644,1.0,1.0,1.0,2721,77,2798,0.0167842410000957,13.362061011999684,148.86387753486633,success,1,,"{
+  ""faithfulness"": 1.0,
+  ""answer_relevancy"": 1.0,
+  ""context_relevance"": 1.0
+}"
+EQ001,8,What three types of support do federal agencies rely on for cybersecurity incident response?,GAO-24-105658,PDF p. 2,[2],"[17, 8, 45, 22, 3, 18, 20, 9]",not_computed_pages_not_proven_same_namespace,Qwen/Qwen3-8B,8,1,1,1,,1.0,,1,1,1.0,0.9492756620369743,1.0,1.0,1.0,3269,80,3349,0.0167842410000957,16.583840899999814,185.48317193984985,success,1,,"{
+  ""faithfulness"": 1.0,
+  ""answer_relevancy"": 1.0,
+  ""context_relevance"": 1.0
+}"
+EQ001,9,What three types of support do federal agencies rely on for cybersecurity incident response?,GAO-24-105658,PDF p. 2,[2],"[17, 8, 45, 22, 3, 18, 20, 9, 60]",not_computed_pages_not_proven_same_namespace,Qwen/Qwen3-8B,9,1,1,1,,1.0,,1,1,1.0,0.9492756620369743,,,,3805,80,3885,0.0167842410000957,19.44881762700016,,failed,3,ValueError: Evaluator response could not be parsed into valid scores.,"{
+  ""faithfulness"": 1,
+  ""relevance"": 1,
+  ""conciseness"": 1
+}"
+EQ001,10,What three types of support do federal agencies rely on for cybersecurity incident response?,GAO-24-105658,PDF p. 2,[2],"[17, 8, 45, 22, 3, 18, 20, 9, 60, 45]",not_computed_pages_not_proven_same_namespace,Qwen/Qwen3-8B,10,1,1,1,,1.0,,1,1,1.0,0.9466454870600813,,,,4377,80,4457,0.0167842410000957,22.870651032000296,,failed,3,ValueError: Evaluator response could not be parsed into valid scores.,"{
+  ""tools"": [
+    ""Endpoint Detection and Response (EDR) solutions"",
+    ""Continuous Diagnostics and Mitigation (CDM) program""
+  ],
+  ""services"": [
+    ""Threat hunting services provided by CISA and third-party firms"",
+    ""Cyber threat intelligence services from CISA""
+  ],
+  ""resources"": [
+    ""Skilled staff for incident response"",
+    ""Funding for cybersecurity incident response enhancements""
+  ]
+}"
+EQ002,1,How many civilian CFO Act agencies were covered in GAO's incident-response preparedness finding?,GAO-24-105658,PDF p. 2,[2],[2],not_computed_pages_not_proven_same_namespace,Qwen/Qwen3-8B,1,1,1,1,,1.0,,1,1,1.0,1.0,1.0,1.0,1.0,814,21,835,0.0195716670000365,2.9365615309998248,118.23248481750488,success,1,,"{
+  ""faithfulness"": 1.0,
+  ""answer_relevancy"": 1.0,
+  ""context_relevance"": 1.0
+}"
+EQ002,2,How many civilian CFO Act agencies were covered in GAO's incident-response preparedness finding?,GAO-24-105658,PDF p. 2,[2],"[2, 24]",not_computed_pages_not_proven_same_namespace,Qwen/Qwen3-8B,2,1,1,1,,1.0,,1,1,1.0,1.0,1.0,1.0,1.0,1379,33,1412,0.0195716670000365,5.526953756999774,113.8577311038971,success,1,,"{""faithfulness"": 1.0, ""answer_relevancy"": 1.0, ""context_relevance"": 1.0}"
+EQ002,3,How many civilian CFO Act agencies were covered in GAO's incident-response preparedness finding?,GAO-24-105658,PDF p. 2,[2],"[2, 24, 9]",not_computed_pages_not_proven_same_namespace,Qwen/Qwen3-8B,3,1,1,1,,1.0,,1,1,1.0,1.0,1.0,1.0,1.0,1927,33,1960,0.0195716670000365,6.028005253000174,120.87481021881104,success,1,,"{
+  ""faithfulness"": 1.0,
+  ""answer_relevancy"": 1.0,
+  ""context_relevance"": 1.0
+}"
+EQ002,4,How many civilian CFO Act agencies were covered in GAO's incident-response preparedness finding?,GAO-24-105658,PDF p. 2,[2],"[2, 24, 9, 47]",not_computed_pages_not_proven_same_namespace,Qwen/Qwen3-8B,4,1,1,1,,1.0,,1,1,1.0,1.0,1.0,1.0,1.0,2390,54,2444,0.0195716670000365,9.828426055999898,120.32785367965698,success,1,,"{
+  ""faithfulness"": 1.0,
+  ""answer_relevancy"": 1.0,
+  ""context_relevance"": 1.0
+}"
+EQ002,5,How many civilian CFO Act agencies were covered in GAO's incident-response preparedness finding?,GAO-24-105658,PDF p. 2,[2],"[2, 24, 9, 47, 45]",not_computed_pages_not_proven_same_namespace,Qwen/Qwen3-8B,5,1,1,1,,1.0,,1,1,1.0,1.0,1.0,1.0,1.0,2960,75,3035,0.0195716670000365,14.553675268000006,150.9108419418335,success,1,,"{""faithfulness"": 1.0, ""answer_relevancy"": 1.0, ""context_relevance"": 1.0}"
+EQ002,6,How many civilian CFO Act agencies were covered in GAO's incident-response preparedness finding?,GAO-24-105658,PDF p. 2,[2],"[2, 24, 9, 47, 45, 50]",not_computed_pages_not_proven_same_namespace,Qwen/Qwen3-8B,6,1,1,1,,1.0,,1,1,1.0,1.0,1.0,1.0,1.0,3239,78,3317,0.0195716670000365,16.288881172999936,100.70978283882141,success,1,,"{
+  ""faithfulness"": 1.0,
+  ""answer_relevancy"": 1.0,
+  ""context_relevance"": 1.0
+}"
+EQ002,7,How many civilian CFO Act agencies were covered in GAO's incident-response preparedness finding?,GAO-24-105658,PDF p. 2,[2],"[2, 24, 9, 47, 45, 50, 15]",not_computed_pages_not_proven_same_namespace,Qwen/Qwen3-8B,7,1,1,1,,1.0,,1,1,1.0,1.0,1.0,1.0,1.0,3369,79,3448,0.0195716670000365,17.259289181999975,88.56056880950928,success,1,,"{""faithfulness"": 1.0, ""answer_relevancy"": 1.0, ""context_relevance"": 1.0}"
+EQ002,8,How many civilian CFO Act agencies were covered in GAO's incident-response preparedness finding?,GAO-24-105658,PDF p. 2,[2],"[2, 24, 9, 47, 45, 50, 15, 3]",not_computed_pages_not_proven_same_namespace,Qwen/Qwen3-8B,8,1,1,1,,1.0,,1,1,1.0,1.0,1.0,1.0,1.0,3600,79,3679,0.0195716670000365,17.974729323000247,95.52208209037781,success,1,,"{
+  ""faithfulness"": 1.0,
+  ""answer_relevancy"": 1.0,
+  ""context_relevance"": 1.0
+}"
+EQ002,9,How many civilian CFO Act agencies were covered in GAO's incident-response preparedness finding?,GAO-24-105658,PDF p. 2,[2],"[2, 24, 9, 47, 45, 50, 15, 3, 4]",not_computed_pages_not_proven_same_namespace,Qwen/Qwen3-8B,9,1,1,1,,1.0,,1,1,1.0,1.0,,,,3835,75,3910,0.0195716670000365,18.85592192100012,,failed,3,ValueError: Evaluator response could not be parsed into valid scores.,"{
+  ""fairness"": 5
+}"
+EQ002,10,How many civilian CFO Act agencies were covered in GAO's incident-response preparedness finding?,GAO-24-105658,PDF p. 2,[2],"[2, 24, 9, 47, 45, 50, 15, 3, 4, 29]",not_computed_pages_not_proven_same_namespace,Qwen/Qwen3-8B,10,1,1,1,,1.0,,1,1,1.0,1.0,,,,4327,76,4403,0.0195716670000365,21.87323834300014,,failed,3,ValueError: Evaluator response could not be parsed into valid scores.,"{
+  ""answer"": ""23""
+}"
+EQ003,1,When was CISA's incident-response playbook issued?,GAO-24-105658,PDF p. 2,[2],[24],not_computed_pages_not_proven_same_namespace,Qwen/Qwen3-8B,1,1,1,1,,1.0,,1,1,1.0,1.0,1.0,1.0,0.0,660,65,725,0.0770922010001413,6.954923933999908,120.22523903846741,success,1,,"{""faithfulness"": 1.0, ""answer_relevancy"": 1.0, ""context_relevance"": 0.0}"
+EQ003,2,When was CISA's incident-response playbook issued?,GAO-24-105658,PDF p. 2,[2],"[24, 38]",not_computed_pages_not_proven_same_namespace,Qwen/Qwen3-8B,2,1,1,1,,1.0,,1,1,1.0,1.0,0.0,1.0,0.0,1106,84,1190,0.0770922010001413,9.733281177999745,108.88178849220276,success,1,,"{""faithfulness"": 0.0, ""answer_relevancy"": 1.0, ""context_relevance"": 0.0}"
+EQ003,3,When was CISA's incident-response playbook issued?,GAO-24-105658,PDF p. 2,[2],"[24, 38, 20]",not_computed_pages_not_proven_same_namespace,Qwen/Qwen3-8B,3,1,1,1,,1.0,,1,1,1.0,1.0,1.0,1.0,1.0,1669,31,1700,0.0770922010001413,5.429228363999755,118.48873972892761,success,1,,"{
+  ""faithfulness"": 1.0,
+  ""answer_relevancy"": 1.0,
+  ""context_relevance"": 1.0
+}"
+EQ003,4,When was CISA's incident-response playbook issued?,GAO-24-105658,PDF p. 2,[2],"[24, 38, 20, 14]",not_computed_pages_not_proven_same_namespace,Qwen/Qwen3-8B,4,1,1,1,,1.0,,1,1,1.0,1.0,1.0,1.0,1.0,2236,24,2260,0.0770922010001413,6.248432596999919,106.36352872848511,success,1,,"{
+  ""faithfulness"": 1.0,
+  ""answer_relevancy"": 1.0,
+  ""context_relevance"": 1.0
+}"
+EQ003,5,When was CISA's incident-response playbook issued?,GAO-24-105658,PDF p. 2,[2],"[24, 38, 20, 14, 25]",not_computed_pages_not_proven_same_namespace,Qwen/Qwen3-8B,5,1,1,1,,1.0,,1,1,1.0,1.0,1.0,1.0,1.0,2716,23,2739,0.0770922010001413,7.461865176000174,102.57466125488281,success,1,,"{
+  ""faithfulness"": 1.0,
+  ""answer_relevancy"": 1.0,
+  ""context_relevance"": 1.0
+}"
+EQ003,6,When was CISA's incident-response playbook issued?,GAO-24-105658,PDF p. 2,[2],"[24, 38, 20, 14, 25, 64]",not_computed_pages_not_proven_same_namespace,Qwen/Qwen3-8B,6,1,1,1,,1.0,,1,1,1.0,1.0,1.0,1.0,1.0,3380,23,3403,0.0770922010001413,9.996965053000167,102.70552611351013,success,1,,"{
+  ""faithfulness"": 1.0,
+  ""answer_relevancy"": 1.0,
+  ""context_relevance"": 1.0
+}"
+EQ003,7,When was CISA's incident-response playbook issued?,GAO-24-105658,PDF p. 2,[2],"[24, 38, 20, 14, 25, 64, 44]",not_computed_pages_not_proven_same_namespace,Qwen/Qwen3-8B,7,1,1,1,,1.0,,1,1,1.0,1.0,,,,3715,23,3738,0.0770922010001413,11.244500108000013,,failed,3,ValueError: Evaluator response could not be parsed into valid scores.,"{
+  ""faithfulness"": 1.0,
+  ""answer_correctness"": 1.0,
+  ""helpfulness"": 1.0
+}"
+EQ003,8,When was CISA's incident-response playbook issued?,GAO-24-105658,PDF p. 2,[2],"[24, 38, 20, 14, 25, 64, 44, 50]",not_computed_pages_not_proven_same_namespace,Qwen/Qwen3-8B,8,1,1,1,,1.0,,1,1,1.0,0.9876712785649564,,,,3994,23,4017,0.0770922010001413,12.42987072599999,,failed,3,ValueError: Evaluator response could not be parsed into valid scores.,"{
+  ""date_issued"": ""Not specified in the provided sources""
+}"
+EQ003,9,When was CISA's incident-response playbook issued?,GAO-24-105658,PDF p. 2,[2],"[24, 38, 20, 14, 25, 64, 44, 50, 46]",not_computed_pages_not_proven_same_namespace,Qwen/Qwen3-8B,9,1,1,1,,1.0,,1,1,1.0,0.9799214801447083,,,,4606,92,4698,0.0770922010001413,26.041747297000256,,failed,3,ValueError: Evaluator response could not be parsed into valid scores.,"{
+  ""date"": ""November 2021"",
+  ""agency"": ""CISA""
+}"
+EQ004,1,How many of the selected nonfederal entities cited positive experiences with CISA OT products and services?,GAO-24-106576,PDF p. 2,[2],[46],not_computed_pages_not_proven_same_namespace,Qwen/Qwen3-8B,1,1,1,1,,1.0,,1,1,1.0,1.0,1.0,1.0,0.0,170,39,209,0.026340891000018,3.818129937999856,115.87857699394226,success,1,,"{""faithfulness"": 1.0, ""answer_relevancy"": 1.0, ""context_relevance"": 0.0}"
+EQ004,2,How many of the selected nonfederal entities cited positive experiences with CISA OT products and services?,GAO-24-106576,PDF p. 2,[2],"[46, 2]",not_computed_pages_not_proven_same_namespace,Qwen/Qwen3-8B,2,1,1,1,,1.0,,1,1,1.0,1.0,1.0,1.0,1.0,354,75,429,0.026340891000018,7.6175562309999805,89.80058598518372,success,1,,"{""faithfulness"": 1.0, ""answer_relevancy"": 1.0, ""context_relevance"": 1.0}"
+EQ004,3,How many of the selected nonfederal entities cited positive experiences with CISA OT products and services?,GAO-24-106576,PDF p. 2,[2],"[46, 2, 30]",not_computed_pages_not_proven_same_namespace,Qwen/Qwen3-8B,3,1,1,1,,1.0,,1,1,1.0,1.0,1.0,1.0,1.0,940,69,1009,0.026340891000018,7.637086159999853,202.4249711036682,success,1,,"{""faithfulness"": 1.0, ""answer_relevancy"": 1.0, ""context_relevance"": 1.0}"
+EQ004,4,How many of the selected nonfederal entities cited positive experiences with CISA OT products and services?,GAO-24-106576,PDF p. 2,[2],"[46, 2, 30, 27]",not_computed_pages_not_proven_same_namespace,Qwen/Qwen3-8B,4,1,1,1,,1.0,,1,1,1.0,1.0,1.0,1.0,1.0,1455,19,1474,0.026340891000018,3.726204438999957,140.86100578308105,success,1,,"{
   ""faithfulness"": 1.0,
   ""answer_relevancy"": 1.0,
   ""context_relevance"": 1.0

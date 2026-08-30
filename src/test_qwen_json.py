@@ -1,3 +1,8 @@
+if __name__ != "__main__":
+    # This is an opt-in live Ollama diagnostic, not a unit test.
+    import unittest
+    raise unittest.SkipTest("Live Ollama diagnostic is excluded from unit-test discovery.")
+
 from langchain_ollama import ChatOllama
 
 

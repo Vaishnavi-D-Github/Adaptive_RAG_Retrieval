@@ -1,0 +1,257 @@
+{
+  "model_version": "20260829T063710Z",
+  "target": "Candidate_Optimal_K",
+  "target_definition": "Smallest K within 0.02 of the best deterministic proxy Quality_Score for a question.",
+  "target_status": "experimental proxy label; not RAGAS validation",
+  "feature_policy": "Only query-characteristic features available before retrieval. No context, answers, scores, tokens, or latency.",
+  "random_seed": 42,
+  "cross_validation": {
+    "method": "StratifiedKFold",
+    "folds": 4
+  },
+  "records": 100,
+  "accuracy": 0.05,
+  "mae_in_k": 3.13,
+  "classification_report": {
+    "1": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 9.0
+    },
+    "2": {
+      "precision": 0.09090909090909091,
+      "recall": 0.1,
+      "f1-score": 0.09523809523809523,
+      "support": 10.0
+    },
+    "3": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 11.0
+    },
+    "4": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 7.0
+    },
+    "5": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 4.0
+    },
+    "6": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 8.0
+    },
+    "7": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 11.0
+    },
+    "8": {
+      "precision": 0.09090909090909091,
+      "recall": 0.07142857142857142,
+      "f1-score": 0.08,
+      "support": 14.0
+    },
+    "9": {
+      "precision": 0.15384615384615385,
+      "recall": 0.125,
+      "f1-score": 0.13793103448275862,
+      "support": 16.0
+    },
+    "10": {
+      "precision": 0.1111111111111111,
+      "recall": 0.1,
+      "f1-score": 0.10526315789473684,
+      "support": 10.0
+    },
+    "accuracy": 0.05,
+    "macro avg": {
+      "precision": 0.04467754467754468,
+      "recall": 0.039642857142857146,
+      "f1-score": 0.04184322876155907,
+      "support": 100.0
+    },
+    "weighted avg": {
+      "precision": 0.05754467754467754,
+      "recall": 0.05,
+      "f1-score": 0.053319090830524586,
+      "support": 100.0
+    }
+  },
+  "confusion_matrix": {
+    "labels": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "values": [
+      [
+        0,
+        2,
+        2,
+        2,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0
+      ],
+      [
+        1,
+        1,
+        3,
+        3,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0
+      ],
+      [
+        1,
+        3,
+        0,
+        1,
+        1,
+        1,
+        0,
+        2,
+        0,
+        2
+      ],
+      [
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        2,
+        0,
+        2
+      ],
+      [
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        2,
+        0
+      ],
+      [
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        0,
+        2,
+        1
+      ],
+      [
+        0,
+        2,
+        1,
+        0,
+        1,
+        1,
+        0,
+        2,
+        2,
+        2
+      ],
+      [
+        0,
+        0,
+        3,
+        3,
+        1,
+        1,
+        2,
+        1,
+        3,
+        0
+      ],
+      [
+        2,
+        1,
+        0,
+        0,
+        4,
+        3,
+        2,
+        1,
+        2,
+        1
+      ],
+      [
+        1,
+        1,
+        1,
+        2,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1
+      ]
+    ]
+  },
+  "feature_importance": {
+    "query_length": 0.17833898889486194,
+    "average_word_length": 0.17302551742970104,
+    "unique_word_count": 0.11963816783485307,
+    "word_count": 0.11349661709188534,
+    "entity_count": 0.07927555844367508,
+    "uppercase_token_count": 0.06355475212190505,
+    "is_procedural": 0.03573721918702314,
+    "is_policy": 0.03171497353247055,
+    "number_indicator": 0.031135869305898643,
+    "requires_multiple_sources": 0.02728257071550943,
+    "starts_with_what": 0.025550093051125242,
+    "starts_with_how": 0.024989772155581513,
+    "is_multi_hop": 0.021896194098477498,
+    "is_definition": 0.017420988862113632,
+    "is_summary": 0.014426251714992401,
+    "question_count": 0.013624538974527518,
+    "question_mark_indicator": 0.013307542347391737,
+    "is_comparison": 0.010859638547613267,
+    "starts_with_when": 0.004724745690393795,
+    "starts_with_why": 0.0,
+    "starts_with_where": 0.0,
+    "starts_with_who": 0.0,
+    "starts_with_which": 0.0
+  },
+  "inputs": {
+    "candidate_labels": "C:\\Users\\Vaishnavi D\\Documents\\Projects\\adaptive-enterprise-rag-second-attempt\\results\\adaptive\\optimal_k_candidates.csv",
+    "evaluation_dataset": "C:\\Users\\Vaishnavi D\\Documents\\Projects\\adaptive-enterprise-rag-second-attempt\\results\\ragas\\ragas_evaluation_dataset.csv"
+  },
+  "model_artifact": "C:\\Users\\Vaishnavi D\\Documents\\Projects\\adaptive-enterprise-rag-second-attempt\\models\\adaptive_k_random_forest_20260829T063710Z.joblib",
+  "created_at": "2026-08-29T06:37:10.790995+00:00"
+}

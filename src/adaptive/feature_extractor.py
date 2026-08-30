@@ -185,6 +185,14 @@ def extract_features(
     query_length = len(query)
 
     question_count = query.count("?")
+    unique_word_count = len({word.lower() for word in words})
+    average_word_length = (
+        sum(len(word) for word in words) / word_count if word_count else 0.0
+    )
+    uppercase_token_count = sum(
+        1 for word in words if len(word) > 1 and word.isupper()
+    )
+    starts_with = lower.lstrip()
 
     capitalized_entities = re.findall(
         r"\b[A-Z][A-Za-z0-9-]{2,}\b",
@@ -264,8 +272,20 @@ def extract_features(
         query=query,
         query_length=query_length,
         word_count=word_count,
+        unique_word_count=unique_word_count,
+        average_word_length=average_word_length,
         entity_count=entity_count,
         question_count=question_count,
+        question_mark_indicator=(question_count > 0),
+        number_indicator=any(character.isdigit() for character in query),
+        uppercase_token_count=uppercase_token_count,
+        starts_with_what=starts_with.startswith("what"),
+        starts_with_why=starts_with.startswith("why"),
+        starts_with_how=starts_with.startswith("how"),
+        starts_with_when=starts_with.startswith("when"),
+        starts_with_where=starts_with.startswith("where"),
+        starts_with_who=starts_with.startswith("who"),
+        starts_with_which=starts_with.startswith("which"),
         intent=_estimate_intent(lower),
         complexity=complexity,
         is_comparison=is_comparison,

@@ -1,0 +1,101 @@
+ID,user_input,Candidate_Optimal_K,query_char_count,query_word_count,query_unique_word_count,query_avg_word_length,query_sentence_count,question_mark_indicator,number_indicator,uppercase_token_count,starts_what,starts_why,starts_how,starts_when,starts_where,starts_who,starts_which,entity_count,question_count,intent,comparison,procedural,policy,summary,definition,multi_hop,evidence_breadth
+EQ001,What three types of support do federal agencies rely on for cybersecurity incident response?,1,92,14,14,5.571428571428571,1,1,0,0,1,0,0,0,0,0,0,0,1,,0,0,0,0,0,0,0
+EQ002,How many civilian CFO Act agencies were covered in GAO's incident-response preparedness finding?,1,96,13,13,6.384615384615385,1,1,0,1,0,0,1,0,0,0,0,0,1,,0,1,0,0,0,0,0
+EQ003,When was CISA's incident-response playbook issued?,4,50,6,6,7.333333333333333,1,1,0,0,0,0,0,1,0,0,0,0,1,,0,0,0,0,0,0,0
+EQ004,How many of the selected nonfederal entities cited positive experiences with CISA OT products and services?,9,107,16,16,5.6875,1,1,0,2,0,0,1,0,0,0,0,0,1,,0,1,0,0,0,1,0
+EQ005,How many desirable strategy characteristics were fully addressed by the National Cybersecurity Strategy and implementation plan?,9,128,16,15,7.0,1,1,0,0,0,0,1,0,0,0,0,0,1,,0,1,0,0,0,1,0
+EQ006,By about what percentage did cyber incidents affecting federal agencies grow from fiscal year 2006 to 2015?,5,107,17,17,5.294117647058823,1,1,1,0,0,0,0,0,0,0,0,0,1,,0,0,0,0,0,0,0
+EQ007,How many recommendations did GAO make to address NIH security deficiencies?,1,75,11,11,5.818181818181818,1,1,0,2,0,0,1,0,0,0,0,0,1,,0,1,0,0,0,0,0
+EQ008,How long did officials say K-12 learning loss after a cyberattack could last?,1,77,13,13,4.923076923076923,1,1,1,1,0,0,1,0,0,0,0,0,1,,0,1,0,0,0,0,0
+EQ009,How many cybersecurity challenges did GAO identify in its 2018 high-risk work?,2,78,12,12,5.5,1,1,1,1,0,0,1,0,0,0,0,0,1,,0,1,0,0,0,0,0
+EQ010,How many actions are described as essential within GAO's four cybersecurity challenges?,4,87,12,12,6.25,1,1,0,0,0,0,1,0,0,0,0,0,1,,0,1,0,0,0,0,0
+EQ011,What was GAO's reported financial benefit from its work in fiscal year 2024?,2,76,13,13,4.846153846153846,1,1,1,0,1,0,0,0,0,0,0,0,1,,0,0,0,0,0,0,0
+EQ012,How many Treasury auctions were held in fiscal year 2025?,2,57,10,10,4.7,1,1,1,0,0,0,1,0,0,0,0,0,1,,0,1,0,0,0,0,0
+EQ013,How much did Treasury borrow for government operations in fiscal year 2025?,1,75,12,12,5.25,1,1,1,0,0,0,1,0,0,0,0,0,1,,0,1,0,0,0,0,0
+EQ014,How far behind schedule was the Navy's modernization of the three Zumwalt-class destroyers?,8,91,13,12,6.0,1,1,0,0,0,0,1,0,0,0,0,0,1,,0,1,0,0,0,0,0
+EQ015,What percentage of Main Street Program loans had been fully repaid as of January 2026?,9,86,15,14,4.733333333333333,1,1,1,0,1,0,0,0,0,0,0,0,1,,0,0,0,0,0,0,0
+EQ016,What does operational technology mean in the cybersecurity reports?,8,67,9,9,6.444444444444445,1,1,0,0,1,0,0,0,0,0,0,0,1,,0,0,0,0,0,0,0
+EQ017,What is endpoint detection and response in the context of the incident-response report?,3,87,13,12,5.6923076923076925,1,1,0,0,1,0,0,0,0,0,0,0,1,,0,0,0,0,1,1,0
+EQ018,What does cyber resiliency mean in the CrowdStrike outage snapshot?,8,67,10,10,5.7,1,1,0,0,1,0,0,0,0,0,0,0,1,,0,0,0,0,0,0,0
+EQ019,What is meant by an outcome-oriented performance measure in the national strategy discussion?,8,93,13,13,6.153846153846154,1,1,0,0,1,0,0,0,0,0,0,0,1,,0,0,0,0,1,0,0
+EQ020,What is a CFO Act agency in the incident-response report?,7,57,10,10,4.7,1,1,0,1,1,0,0,0,0,0,0,0,1,,0,0,0,0,1,0,0
+EQ021,What is a critical-infrastructure operational technology system?,4,64,7,7,8.142857142857142,1,1,0,0,1,0,0,0,0,0,0,0,1,,0,0,0,0,1,0,0
+EQ022,What does supply chain risk management mean in the CrowdStrike outage context?,3,78,12,12,5.5,1,1,0,0,1,0,0,0,0,0,0,0,1,,0,0,0,0,0,0,0
+EQ023,What is the Wall of Receipts?,8,29,6,6,3.8333333333333335,1,1,0,0,1,0,0,0,0,0,0,0,1,,0,0,0,0,1,0,0
+EQ024,What is the Main Street Lending Program intended to serve?,1,58,10,10,4.8,1,1,0,0,1,0,0,0,0,0,0,0,1,,0,0,0,0,1,0,0
+EQ025,What does GAO mean by a comprehensive cybersecurity strategy?,8,61,9,9,5.777777777777778,1,1,0,1,1,0,0,0,0,0,0,0,1,,0,0,0,0,0,0,0
+EQ026,What is the policy expectation for using CISA's playbook in incident response?,9,78,12,12,5.5,1,1,0,0,1,0,0,0,0,0,0,0,1,,0,0,1,0,1,0,0
+EQ027,What is the policy concern with agencies' event logging implementation?,10,71,10,10,6.0,1,1,0,0,1,0,0,0,0,0,0,0,1,,0,0,1,0,1,0,0
+EQ028,What is GAO's recommendation for State Department contingency plans affecting national security?,9,96,12,12,7.0,1,1,0,0,1,0,0,0,0,0,0,0,1,,0,0,0,0,1,0,0
+EQ029,What policy role does the National Infrastructure Protection Plan assign for K-12 cybersecurity?,3,96,13,13,6.384615384615385,1,1,1,1,1,0,0,0,0,0,0,0,1,,0,0,1,0,0,0,0
+EQ030,What policy concern did GAO identify about transparency of DOGE contract savings?,2,81,12,12,5.75,1,1,0,2,1,0,0,0,0,0,0,0,1,,0,0,1,0,0,0,0
+EQ031,What are agencies expected to improve in risk-based information security programs?,2,82,11,11,6.454545454545454,1,1,0,0,1,0,0,0,0,0,0,0,1,,0,0,0,0,0,0,0
+EQ032,What policy issue did GAO identify for sharing cyber threat information with critical infrastructure?,6,101,14,14,6.214285714285714,1,1,0,1,1,0,0,0,0,0,0,0,1,,0,0,1,0,0,0,0
+EQ033,What policy gaps remained in the National Cybersecurity Strategy and implementation plan?,10,89,12,12,6.416666666666667,1,1,0,0,1,0,0,0,0,0,0,0,1,,0,0,1,0,0,1,0
+EQ034,What policy issue did GAO find in CISA's coordination on OT risks?,7,66,12,12,4.5,1,1,0,2,1,0,0,0,0,0,0,0,1,,0,0,1,0,0,0,0
+EQ035,What policy issue did GAO identify with the security of NIH's information systems?,2,82,13,13,5.3076923076923075,1,1,0,1,1,0,0,0,0,0,0,0,1,,0,0,1,0,0,0,0
+EQ036,What policy approach should agencies use for cybersecurity technologies protecting critical infrastructure?,2,107,12,12,7.916666666666667,1,1,0,0,1,0,0,0,0,0,0,0,1,,0,0,1,0,0,0,0
+EQ037,What policy issue did GAO identify with the Navy's hypersonic modernization strategy?,4,85,12,12,6.083333333333333,1,1,0,1,1,0,0,0,0,0,0,0,1,,0,0,1,0,0,0,0
+EQ038,What policy safeguards are relevant when an organization deploys a widely used security update?,10,95,14,14,5.785714285714286,1,1,0,0,1,0,0,0,0,0,0,0,1,,0,0,1,0,0,0,0
+EQ039,"How should agencies prioritize cybersecurity oversight across strategy, systems, infrastructure, and privacy?",3,109,12,12,7.833333333333333,1,1,0,0,0,0,1,0,0,0,0,0,1,,0,1,0,0,0,1,0
+EQ040,What policy response follows when a national strategy lacks outcome measures and resource estimates?,3,100,14,14,6.142857142857143,1,1,0,0,1,0,0,0,0,0,0,0,1,,0,0,1,0,0,1,0
+EQ041,How should a K-12 organization prepare for a cyber incident according to the supplied reports?,9,94,15,14,5.266666666666667,1,1,1,1,0,0,1,0,0,0,0,0,1,,0,1,0,0,0,0,0
+EQ042,How should an agency begin planning cyber vulnerability and incident-response activities?,3,89,11,11,7.090909090909091,1,1,0,0,0,0,1,0,0,0,0,0,1,,0,1,0,0,0,1,0
+EQ043,How should an agency improve its ability to recover from a service disruption?,7,78,13,13,5.0,1,1,0,0,0,0,1,0,0,0,0,0,1,,0,1,0,0,0,0,0
+EQ044,What steps should an agency take to strengthen a risk-based information-security program?,8,89,12,12,6.416666666666667,1,1,0,0,1,0,0,0,0,0,0,0,1,,0,1,0,0,0,0,0
+EQ045,How should an organization select cybersecurity technologies for critical-infrastructure protection?,5,100,10,10,9.0,1,1,0,0,0,0,1,0,0,0,0,0,1,,0,1,0,0,0,0,0
+EQ046,How should CISA and partner agencies improve collaboration on OT cybersecurity risks?,3,85,12,12,6.083333333333333,1,1,0,2,0,0,1,0,0,0,0,0,1,,0,1,0,0,0,1,0
+EQ047,How should a federal agency make its cyber threat information sharing more useful?,6,82,13,13,5.3076923076923075,1,1,0,0,0,0,1,0,0,0,0,0,1,,0,1,0,0,0,0,0
+EQ048,"How should an agency structure incident-response readiness around people, tools, and outside support?",9,101,13,13,6.615384615384615,1,1,0,0,0,0,1,0,0,0,0,0,1,,0,1,0,0,0,1,0
+EQ049,How should a team measure progress on a national cybersecurity initiative?,4,74,11,10,5.7272727272727275,1,1,0,0,0,0,1,0,0,0,0,0,1,,0,1,0,0,0,0,0
+EQ050,"How should an oversight team review reported savings from terminated contracts, grants, and leases?",6,99,14,14,5.928571428571429,1,1,0,0,0,0,1,0,0,0,0,0,1,,0,1,0,0,0,1,0
+EQ051,How should the Navy address its delayed hypersonic capability effort?,4,69,10,10,5.9,1,1,0,0,0,0,1,0,0,0,0,0,1,,0,1,0,0,0,0,0
+EQ052,How should an agency prepare for a software-supply-chain disruption like the CrowdStrike outage?,9,96,13,13,6.384615384615385,1,1,0,0,0,0,1,0,0,0,0,0,1,,0,1,0,0,0,0,0
+EQ053,How should federal leaders close gaps in a national cybersecurity strategy?,10,75,11,11,5.818181818181818,1,1,0,0,0,0,1,0,0,0,0,0,1,,0,1,0,0,0,0,0
+EQ054,How should a cybersecurity program address deficiencies across the five core security functions?,8,96,13,13,6.384615384615385,1,1,0,0,0,0,1,0,0,0,0,0,1,,0,1,0,0,0,0,0
+EQ055,How should a critical-infrastructure operator use CISA OT services while managing their limitations?,7,100,13,13,6.6923076923076925,1,1,0,2,0,0,1,0,0,0,0,0,1,,0,1,0,0,0,0,0
+EQ056,How does operational technology differ from ordinary information technology in the supplied cybersecurity material?,9,115,14,13,7.214285714285714,1,1,0,0,0,0,1,0,0,0,0,0,1,,0,1,0,0,0,0,0
+EQ057,How does the CrowdStrike outage differ from the SolarWinds attack?,1,66,10,9,5.6,1,1,0,0,0,0,1,0,0,0,0,0,1,,0,1,0,0,0,0,0
+EQ058,"Compare the incident-response support roles of tools, services, and resources.",8,78,10,10,6.6,1,0,0,0,0,0,0,0,0,0,0,0,0,,1,0,0,0,0,1,0
+EQ059,Compare the two incomplete national-strategy characteristics identified by GAO.,9,79,9,9,7.777777777777778,1,0,0,1,0,0,0,0,0,0,0,0,0,,1,0,0,0,0,0,0
+EQ060,Compare the two main OT coordination challenges identified by selected agencies.,9,80,11,11,6.2727272727272725,1,0,0,1,0,0,0,0,0,0,0,0,0,,1,0,0,0,0,0,0
+EQ061,Compare the operational impacts of a K-12 cyberattack on learning and recovery.,3,79,12,12,5.583333333333333,1,0,1,1,0,0,0,0,0,0,0,0,0,,1,0,0,0,0,1,0
+EQ062,How do the cybersecurity findings for NIH and federal agencies generally compare?,9,81,12,12,5.75,1,1,0,1,0,0,1,0,0,0,0,0,1,,1,1,0,0,0,1,0
+EQ063,Compare the reported repayment outcome of the Main Street Program with the internal-control improvements described by GAO.,4,122,17,15,6.176470588235294,1,0,0,1,0,0,0,0,0,0,0,0,0,,1,0,0,0,0,0,0
+EQ064,Compare Treasury's borrowing approach with the fiscal risk noted in the debt-management report.,9,95,13,12,6.3076923076923075,1,0,0,0,0,0,0,0,0,0,0,0,0,,1,0,0,0,0,0,0
+EQ065,Compare the types of cybersecurity technologies available for critical-infrastructure protection with the implementation gap identified by GAO.,8,143,17,16,7.411764705882353,1,0,0,1,0,0,0,0,0,0,0,0,0,,1,0,0,0,0,0,0
+EQ066,Compare CISA's positive OT service experiences with the limitations reported by users.,8,86,12,12,6.166666666666667,1,0,0,1,0,0,0,0,0,0,0,0,0,,1,0,0,0,0,0,0
+EQ067,Compare the cybersecurity governance gaps in the National Cybersecurity Strategy with the gaps revealed by the CrowdStrike outage.,6,130,18,13,6.222222222222222,1,0,0,0,0,0,0,0,0,0,0,0,0,,1,0,0,0,0,0,0
+EQ068,Compare federal-system security challenges with critical-infrastructure cybersecurity challenges in GAO's high-risk framework.,5,126,12,11,9.5,1,0,0,0,0,0,0,0,0,0,0,0,0,,1,0,0,0,0,0,0
+EQ069,"Compare the transparency problems in DOGE's contract, grant, and lease savings estimates.",3,89,12,12,6.25,1,0,0,0,0,0,0,0,0,0,0,0,0,,1,0,0,0,0,1,0
+EQ070,Compare the Navy's DDG 1000 modernization schedule challenge with its missile-production challenge.,2,99,12,11,7.25,1,0,1,1,0,0,0,0,0,0,0,0,0,,1,0,0,0,0,0,0
+EQ071,Summarize the main incident-response preparedness finding for federal agencies.,8,79,9,9,7.777777777777778,1,0,0,0,0,0,0,0,0,0,0,0,0,,0,0,0,1,0,0,0
+EQ072,Summarize the main cybersecurity finding for K-12 schools.,10,58,8,8,6.25,1,0,1,1,0,0,0,0,0,0,0,0,0,,0,0,0,1,0,0,0
+EQ073,Summarize GAO's assessment of the National Cybersecurity Strategy and its implementation plan.,10,94,12,12,6.833333333333333,1,0,0,0,0,0,0,0,0,0,0,0,0,,0,0,0,1,0,1,0
+EQ074,Summarize the cybersecurity lessons of the CrowdStrike outage.,1,62,8,7,6.75,1,0,0,0,0,0,0,0,0,0,0,0,0,,0,0,0,1,0,0,0
+EQ075,Summarize GAO's high-risk cybersecurity framework and current concern.,7,70,8,8,7.75,1,0,0,0,0,0,0,0,0,0,0,0,0,,0,0,0,1,0,1,0
+EQ076,"Summarize the main findings on CISA's OT cybersecurity products, services, and coordination.",10,92,12,12,6.5,1,0,0,1,0,0,0,0,0,0,0,0,0,,0,0,0,1,0,1,0
+EQ077,Summarize the information-security challenges described in GAO's 2016 testimony.,7,80,9,9,7.888888888888889,1,0,1,0,0,0,0,0,0,0,0,0,0,,0,0,0,1,0,0,0
+EQ078,Summarize the key findings on Treasury debt management and fiscal risk.,9,71,11,11,5.454545454545454,1,0,0,0,0,0,0,0,0,0,0,0,0,,0,0,0,1,0,1,0
+EQ079,Summarize the Navy's hypersonic modernization findings.,6,55,6,6,8.166666666666666,1,0,0,0,0,0,0,0,0,0,0,0,0,,0,0,0,1,0,0,0
+EQ080,Summarize GAO's concerns about DOGE's Wall of Receipts savings figures.,8,71,10,10,6.1,1,0,0,0,0,0,0,0,0,0,0,0,0,,0,0,0,1,0,0,0
+EQ081,How do CISA's incident-response playbook and the CrowdStrike findings work together to guide disruption preparedness?,9,117,15,15,6.8,1,1,0,0,0,0,1,0,0,0,0,0,1,,0,1,0,0,0,1,0
+EQ082,How do federal incident-response requirements relate to the broader high-risk cybersecurity challenges?,10,103,12,12,7.583333333333333,1,1,0,0,0,0,1,0,0,0,0,0,1,,0,1,0,0,0,0,0
+EQ083,How should national leaders connect strategy measurement with cybersecurity oversight?,6,86,10,10,7.6,1,1,0,0,0,0,1,0,0,0,0,0,1,,0,1,0,0,0,0,0
+EQ084,How do CISA's OT coordination findings relate to the need for timely cyber threat information sharing?,7,102,16,16,5.375,1,1,0,1,0,0,1,0,0,0,0,0,1,,0,1,0,0,0,0,0
+EQ085,How do the CrowdStrike and SolarWinds examples reinforce supply-chain oversight concerns?,6,89,11,11,7.090909090909091,1,1,0,0,0,0,1,0,0,0,0,0,1,,0,1,0,0,0,1,0
+EQ086,How do the K-12 cybersecurity findings relate to the high-risk report's critical-infrastructure concerns?,9,105,13,12,7.076923076923077,1,1,1,1,0,0,1,0,0,0,0,0,1,,0,1,0,0,0,0,0
+EQ087,How do NIH security deficiencies connect to the five core security functions described in its report?,5,101,16,15,5.3125,1,1,0,1,0,0,1,0,0,0,0,0,1,,0,1,0,0,0,0,0
+EQ088,How do GAO's critical-infrastructure technology framework and the CISA OT report complement each other?,10,103,14,14,6.357142857142857,1,1,0,2,0,0,1,0,0,0,0,0,1,,0,1,0,0,0,1,0
+EQ089,How do predictable Treasury auctions and transparent DOGE savings reporting illustrate different accountability needs?,7,118,14,14,7.428571428571429,1,1,0,1,0,0,1,0,0,0,0,0,1,,0,1,0,0,0,1,0
+EQ090,How do the Main Street Program's internal-control improvements and GAO's performance-accountability mission reinforce one another?,6,130,15,15,7.666666666666667,1,1,0,0,0,0,1,0,0,0,0,0,1,,0,1,0,0,0,1,0
+EQ091,Does the organization reimburse employees for home-office internet service?,2,75,9,9,7.333333333333333,1,1,0,0,0,0,0,0,0,0,0,0,1,,0,0,0,0,0,0,0
+EQ092,What is the annual paid leave allowance for a new employee?,7,59,11,11,4.363636363636363,1,1,0,0,1,0,0,0,0,0,0,0,1,,0,0,0,0,1,0,0
+EQ093,Can I carry unused vacation days into the next year?,10,52,10,10,4.2,1,1,0,0,0,0,0,0,0,0,0,0,1,,0,0,0,0,0,0,0
+EQ094,What is the company's parental-leave policy?,3,44,6,6,6.333333333333333,1,1,0,0,1,0,0,0,0,0,0,0,1,,0,0,1,0,1,0,0
+EQ095,How do I enroll in the company's health insurance plan?,7,55,10,10,4.5,1,1,0,0,0,0,1,0,0,0,0,0,1,,0,1,0,0,0,0,0
+EQ096,What is the employee expense-claim approval process?,8,52,7,7,6.428571428571429,1,1,0,0,1,0,0,0,0,0,0,0,1,,0,1,0,0,1,0,0
+EQ097,What is the organization-wide policy for reporting workplace harassment?,1,72,9,9,7.0,1,1,0,0,1,0,0,0,0,0,0,0,1,,0,0,1,0,1,0,0
+EQ098,How do employee performance ratings affect annual bonuses?,2,58,8,8,6.25,1,1,0,0,0,0,1,0,0,0,0,0,1,,0,1,0,0,0,0,0
+EQ099,"Can a remote employee work temporarily from another country, and what approvals are needed?",3,91,14,14,5.428571428571429,1,1,0,0,0,0,0,0,0,0,0,0,1,,0,0,0,0,0,1,0
+EQ100,What employee data-retention schedule applies to personnel records and who may approve exceptions?,7,98,13,13,6.538461538461538,1,1,0,0,1,0,0,0,0,0,0,0,1,,0,0,0,0,0,1,0

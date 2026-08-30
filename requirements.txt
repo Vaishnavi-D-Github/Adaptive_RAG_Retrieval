@@ -1,0 +1,14 @@
+# Core runtime
+chromadb==1.5.9
+sentence-transformers==6.0.0
+ollama==0.6.2
+pymupdf==1.28.2
+python-docx>=1.1,<2
+joblib==1.5.3
+pandas==3.0.5
+scikit-learn==1.9.0
+
+# Optional, isolated research evaluation track
+ragas==0.3.9
+langchain-ollama>=0.3,<1
+langchain-community==0.4.2

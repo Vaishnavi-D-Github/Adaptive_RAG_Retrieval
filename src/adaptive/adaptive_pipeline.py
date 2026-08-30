@@ -57,12 +57,7 @@ class AdaptivePipeline:
         # Select K policy
         # -----------------------------------------------------
 
-        if (
-            complexity_model is not None
-            and k_model is not None
-            and complexity_model.trained
-            and k_model.trained
-        ):
+        if k_model is not None and k_model.trained:
 
             self.k_policy = (
                 MLPredictiveKPolicy(
@@ -191,6 +186,7 @@ class AdaptivePipeline:
         final_results = []
 
         total_retrieval_time_ms = 0.0
+        total_verification_time_ms = 0.0
 
         while True:
 
@@ -218,12 +214,15 @@ class AdaptivePipeline:
             # 5. VERIFICATION
             # -------------------------------------------------
 
+            verification_start = time.perf_counter()
             verification = (
                 verify_retrieval(
                     query,
                     retrieved,
                 )
             )
+            verification_time_ms = (time.perf_counter() - verification_start) * 1000
+            total_verification_time_ms += verification_time_ms
 
 
             attempts.append({
@@ -241,6 +240,7 @@ class AdaptivePipeline:
                 "num_results": len(
                     retrieved
                 ),
+                "verification_time_ms": verification_time_ms,
             })
 
 
@@ -291,11 +291,9 @@ class AdaptivePipeline:
         # 9. CONTEXT OPTIMIZATION
         # =====================================================
 
-        optimized_results = (
-            optimize_context(
-                final_results
-            )
-        )
+        optimization_start = time.perf_counter()
+        optimized_results = optimize_context(final_results)
+        optimization_time_ms = (time.perf_counter() - optimization_start) * 1000
 
 
         # =====================================================
@@ -355,6 +353,7 @@ class AdaptivePipeline:
             retrieved_documents=(
                 optimized_results
             ),
+            retrieved_chunk_count=len(final_results),
 
             context=context,
 
@@ -365,6 +364,8 @@ class AdaptivePipeline:
             retrieval_time_ms=(
                 total_retrieval_time_ms
             ),
+            verification_time_ms=total_verification_time_ms,
+            optimization_time_ms=optimization_time_ms,
 
             generation_time_ms=(
                 generation_time_ms

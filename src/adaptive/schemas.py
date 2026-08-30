@@ -9,10 +9,23 @@ class QueryFeatures:
 
     query_length: int
     word_count: int
+    unique_word_count: int
+    average_word_length: float
 
     entity_count: int
 
     question_count: int
+    question_mark_indicator: bool
+    number_indicator: bool
+    uppercase_token_count: int
+
+    starts_with_what: bool
+    starts_with_why: bool
+    starts_with_how: bool
+    starts_with_when: bool
+    starts_with_where: bool
+    starts_with_who: bool
+    starts_with_which: bool
 
     intent: str
 
@@ -48,6 +61,8 @@ class RetrievalPlan:
     predicted_k: Optional[int] = None
 
     k_confidence: Optional[float] = None
+
+    k_probabilities: Optional[Dict[str, float]] = None
 
     decision_reason: str = ""
 
