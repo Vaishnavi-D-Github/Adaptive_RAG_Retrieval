@@ -1,14 +1,145 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Adaptive Enterprise Intelligence</title>
-<style>:root{font-family:Inter,system-ui,sans-serif;color:#e8f0ff;background:#071426}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#12345a,#071426 55%);min-height:100vh}.shell{max-width:1080px;margin:auto;padding:42px 22px}h1{margin:0;font-size:clamp(2rem,6vw,3.5rem)}.tag{color:#73d9ff;letter-spacing:.12em;text-transform:uppercase;font-size:.78rem}section{background:#10243dcc;border:1px solid #28496f;border-radius:18px;padding:24px;margin-top:24px;box-shadow:0 18px 60px #0005}input,textarea,select,button{font:inherit;border-radius:9px;padding:12px;border:1px solid #42668f}input,textarea,select{width:100%;background:#081a2e;color:#fff;margin:6px 0 14px}button{background:#4dd4ff;color:#032039;font-weight:800;cursor:pointer}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.hidden{display:none}pre{white-space:pre-wrap;background:#071426;padding:16px;border-radius:10px;max-height:420px;overflow:auto}.note{color:#b8cbe2}@media(max-width:680px){.grid{grid-template-columns:1fr}}</style></head>
-<body><main class="shell"><p class="tag">Research demonstration</p><h1>Adaptive Enterprise Intelligence</h1><p class="note">Evidence-aware retrieval depth for enterprise questions.</p>
-<section id="login-panel"><h2>Sign in</h2><div class="grid"><label>Email<input id="email" value="employee@example.com" type="email"></label><label>Password<input id="password" value="change-me-employee" type="password"></label></div><button onclick="signIn()">Sign in</button><p id="status" class="note">Development credentials are prefilled.</p></section>
-<section id="employee" class="hidden"><p class="tag">Employee dashboard</p><h2>Ask the knowledge base</h2><textarea id="query" rows="4" placeholder="Ask an enterprise policy question"></textarea><select id="mode"><option value="adaptive">Adaptive K</option><option value="fixed_3">Fixed K=3</option><option value="fixed_5">Fixed K=5</option><option value="fixed_10">Fixed K=10</option></select><button onclick="ask()">Run retrieval</button><h3>Answer and sources</h3><pre id="answer">Your result will appear here.</pre><details><summary>Research Experiment Details</summary><pre id="telemetry"></pre></details></section>
-<section id="hr" class="hidden"><p class="tag">HR dashboard</p><h2>Upload and index a document</h2><input id="file" type="file" accept=".pdf,.docx,.txt"><p class="note">PDF, DOCX, or TXT · maximum 20 MB</p><button onclick="upload()">Upload and index</button><pre id="uploadstatus"></pre></section></main>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Adaptive Enterprise RAG</title>
+<style>
+:root{font-family:Inter,Segoe UI,system-ui,sans-serif;color:#1d2733;background:#f5f7fa;line-height:1.5}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#f5f7fa}button,input,select,textarea{font:inherit}
+.topbar{background:#14213d;color:#fff;border-bottom:4px solid #2ec4b6}.topbar-inner{max-width:1180px;margin:auto;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;gap:18px}.brand{font-size:1.25rem;font-weight:800}.nav{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.nav button{background:#ffffff14;color:#fff;border:1px solid #ffffff35;border-radius:6px;padding:8px 11px;cursor:pointer}.nav button:hover{background:#ffffff24}.user-chip{font-size:.88rem;color:#dbe7ff}
+.shell{max-width:1180px;margin:auto;padding:26px 22px 42px}.hero{padding:46px 0 28px}.hero h1{font-size:clamp(2rem,5vw,4rem);line-height:1.04;margin:0;color:#14213d}.hero p{max-width:760px;color:#536273;font-size:1.05rem}.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}.primary,.secondary,.danger{border:0;border-radius:6px;padding:11px 16px;font-weight:750;cursor:pointer}.primary{background:#2ec4b6;color:#062421}.secondary{background:#fff;color:#14213d;border:1px solid #c9d3df}.danger{background:#b42318;color:#fff}
+.view{display:none}.view.active{display:block}.grid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.card,.panel{background:#fff;border:1px solid #d9e1ea;border-radius:8px;padding:18px;box-shadow:0 8px 24px #1d27330d}.panel h2,.panel h3{margin:0 0 14px;color:#14213d}.muted{color:#697789}.status{margin-top:12px;color:#334155}.error{color:#b42318}.success{color:#166534}label{display:block;font-weight:700;color:#334155;margin:10px 0 5px}input,select,textarea{width:100%;border:1px solid #b9c5d1;border-radius:6px;padding:11px;background:#fff;color:#111827}textarea{resize:vertical;min-height:140px}.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}.metric strong{display:block;font-size:1.3rem;color:#14213d}.metric span{color:#697789;font-size:.86rem}
+.answer{white-space:pre-wrap;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:16px;min-height:120px}.source-list{display:grid;gap:8px;margin-top:10px}.source{border:1px solid #e2e8f0;border-radius:6px;padding:10px;background:#fbfdff}.details{margin-top:12px}.details summary{cursor:pointer;font-weight:800;color:#14213d}.details pre{white-space:pre-wrap;overflow:auto;background:#111827;color:#eef2ff;border-radius:6px;padding:14px;max-height:360px}
+table{width:100%;border-collapse:collapse;background:#fff}th,td{text-align:left;padding:10px;border-bottom:1px solid #e5edf5;vertical-align:top}th{color:#475569;font-size:.85rem;background:#f8fafc}.question-cell{max-width:320px}.history-row{cursor:pointer}.history-row:hover{background:#f8fafc}.hidden{display:none!important}
+@media(max-width:820px){.topbar-inner{align-items:flex-start;flex-direction:column}.grid,.form-row,.cards{grid-template-columns:1fr}.shell{padding:18px 14px 34px}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div>
+      <div class="brand">Adaptive Enterprise RAG</div>
+      <div id="user-chip" class="user-chip">Enterprise knowledge retrieval and question answering</div>
+    </div>
+    <nav id="nav" class="nav hidden">
+      <button data-view="dashboard">Dashboard</button>
+      <button data-view="history">History</button>
+      <button id="documents-tab" data-view="documents" class="hidden">Documents</button>
+      <button onclick="logout()">Logout</button>
+    </nav>
+  </div>
+</header>
+<main class="shell">
+  <section id="landing" class="view active hero">
+    <h1>Adaptive Enterprise RAG</h1>
+    <p>Enterprise knowledge retrieval and question answering using retrieval-augmented generation with adaptive retrieval. Adaptive retrieval selects the amount of context dynamically based on the characteristics of the question and retrieval requirements.</p>
+    <div class="actions">
+      <button class="primary" onclick="showView('login')">Login</button>
+      <button class="secondary" onclick="showView('signup')">Sign Up</button>
+    </div>
+  </section>
+  <section id="login" class="view">
+    <div class="panel">
+      <h2>Login</h2>
+      <form onsubmit="login(event)">
+        <label for="login-email">Email</label>
+        <input id="login-email" type="email" autocomplete="username" required>
+        <label for="login-password">Password</label>
+        <input id="login-password" type="password" autocomplete="current-password" required>
+        <div class="actions"><button class="primary" type="submit">Login</button><button class="secondary" type="button" onclick="showView('signup')">Create Account</button></div>
+      </form>
+      <p id="login-status" class="status"></p>
+    </div>
+  </section>
+  <section id="signup" class="view">
+    <div class="panel">
+      <h2>Create Account</h2>
+      <form onsubmit="signup(event)">
+        <div class="form-row">
+          <div><label for="signup-name">Full Name</label><input id="signup-name" required></div>
+          <div><label for="signup-email">Email</label><input id="signup-email" type="email" autocomplete="username" required></div>
+        </div>
+        <div class="form-row">
+          <div><label for="signup-password">Password</label><input id="signup-password" type="password" autocomplete="new-password" required></div>
+          <div><label for="signup-confirm">Confirm Password</label><input id="signup-confirm" type="password" autocomplete="new-password" required></div>
+        </div>
+        <label for="signup-role">Role</label>
+        <select id="signup-role"><option value="employee">Employee</option><option value="hr">HR</option></select>
+        <p class="muted">HR is a privileged role with document upload access.</p>
+        <div class="actions"><button class="primary" type="submit">Sign Up</button><button class="secondary" type="button" onclick="showView('login')">Back to Login</button></div>
+      </form>
+      <p id="signup-status" class="status"></p>
+    </div>
+  </section>
+  <section id="dashboard" class="view">
+    <div class="grid">
+      <div class="panel">
+        <h2>Ask Question</h2>
+        <label for="question">Question</label>
+        <textarea id="question" placeholder="Ask an enterprise policy, audit, or operations question"></textarea>
+        <label for="mode">Retrieval Mode</label>
+        <select id="mode"><option value="adaptive">Adaptive</option><option value="fixed_3">Fixed K=3</option><option value="fixed_5">Fixed K=5</option><option value="fixed_10">Fixed K=10</option></select>
+        <p class="muted">Adaptive retrieval selects context depth dynamically. Fixed-K modes are included for comparison when needed.</p>
+        <div class="actions"><button class="primary" onclick="ask()">Ask</button></div>
+        <p id="query-status" class="status"></p>
+      </div>
+      <div class="panel">
+        <h2>Retrieval Summary</h2>
+        <div class="cards">
+          <div class="metric"><strong id="metric-initial">-</strong><span>Initial K</span></div>
+          <div class="metric"><strong id="metric-final">-</strong><span>Final K</span></div>
+          <div class="metric"><strong id="metric-iterations">-</strong><span>Iterations</span></div>
+          <div class="metric"><strong id="metric-confidence">-</strong><span>Confidence</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:18px">
+      <h2>Result</h2>
+      <h3>Question</h3><div id="result-question" class="answer">Not available</div>
+      <h3>Answer</h3><div id="answer" class="answer">Your generated answer will appear here.</div>
+      <h3>Sources</h3><div id="sources" class="source-list"></div>
+      <details class="details"><summary>Technical Details</summary><pre id="technical"></pre></details>
+    </div>
+  </section>
+  <section id="history" class="view">
+    <div class="panel">
+      <h2>History</h2>
+      <p id="history-note" class="muted"></p>
+      <div style="overflow:auto"><table><thead><tr><th>Timestamp</th><th>Question</th><th>Mode</th><th>Initial K</th><th>Final K</th><th>Chunks</th><th>Total Tokens</th><th>Latency</th></tr></thead><tbody id="history-body"></tbody></table></div>
+      <details class="details"><summary>Selected History Details</summary><pre id="history-detail">Select a history row.</pre></details>
+    </div>
+  </section>
+  <section id="documents" class="view">
+    <div class="panel">
+      <h2>Document Management</h2>
+      <label for="file">Upload Document</label>
+      <input id="file" type="file" accept=".pdf,.docx,.txt">
+      <p class="muted">Accepted formats: PDF, DOCX, TXT. Maximum upload size: 20 MB.</p>
+      <div class="actions"><button class="primary" onclick="upload()">Upload and Index</button></div>
+      <p id="upload-status" class="status"></p>
+    </div>
+  </section>
+</main>
 <script>
-let auth={}; const el=id=>document.getElementById(id);
-async function call(path,data){let r=await fetch(path,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(data)}),b=await r.json();if(!r.ok)throw Error(b.error||'Request failed');return b}
-async function signIn(){try{auth={email:el('email').value,password:el('password').value};let b=await call('/api/login',auth);el('status').textContent='Signed in as '+b.role+(b.development_credentials?' (development account)':'');el('login-panel').classList.add('hidden');el(b.role==='HR'?'hr':'employee').classList.remove('hidden')}catch(e){el('status').textContent=e.message}}
-async function ask(){try{el('answer').textContent='Working…';let b=await call('/api/query',{...auth,role:'Employee',query:el('query').value,mode:el('mode').value});let r=b.result;el('answer').textContent=(r.generation_result??r.answer??'No generated answer')+'\n\nSources:\n'+JSON.stringify(r.telemetry?.retrieved_sources??r.sources,null,2);el('telemetry').textContent=JSON.stringify(r.telemetry,null,2)}catch(e){el('answer').textContent=e.message}}
-async function upload(){try{let f=el('file').files[0];if(!f)throw Error('Choose a document first.');if(f.size>20*1024*1024)throw Error('File exceeds the 20 MB limit.');let b=await call('/api/hr/upload',{...auth,role:'HR',filename:f.name,content_base64:await new Promise((ok,no)=>{let x=new FileReader;x.onload=()=>ok(x.result.split(',')[1]);x.onerror=no;x.readAsDataURL(f)})});el('uploadstatus').textContent=b.message+' '+b.chunk_count+' chunks indexed.'}catch(e){el('uploadstatus').textContent=e.message}}
-</script></body></html>
+let currentUser=null,lastHistory=[];
+const el=id=>document.getElementById(id);
+function showView(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));el(id).classList.add('active');if(id==='history')loadHistory()}
+async function api(path,{method='GET',body=null}={}){const options={method,headers:{}};if(body){options.headers['content-type']='application/json';options.body=JSON.stringify(body)}const r=await fetch(path,options);const data=await r.json().catch(()=>({success:false,error:'Invalid server response'}));if(!r.ok)throw Error(data.error||'Request failed');return data}
+function setStatus(id,msg,kind=''){el(id).className='status '+kind;el(id).textContent=msg}
+function renderAuth(user){currentUser=user;el('nav').classList.toggle('hidden',!user);el('user-chip').textContent=user?`${user.full_name} | ${user.role.toUpperCase()}`:'Enterprise knowledge retrieval and question answering';el('documents-tab').classList.toggle('hidden',!user||user.role!=='hr')}
+async function bootstrap(){try{const b=await api('/api/me');renderAuth(b.user);showView('dashboard')}catch{renderAuth(null);showView('landing')}}
+async function signup(e){e.preventDefault();try{const body={full_name:el('signup-name').value,email:el('signup-email').value,password:el('signup-password').value,confirm_password:el('signup-confirm').value,role:el('signup-role').value};const b=await api('/api/signup',{method:'POST',body});setStatus('signup-status',b.message,'success');showView('login')}catch(err){setStatus('signup-status',err.message,'error')}}
+async function login(e){e.preventDefault();try{const b=await api('/api/login',{method:'POST',body:{email:el('login-email').value,password:el('login-password').value}});renderAuth(b.user);setStatus('login-status','');showView('dashboard')}catch(err){setStatus('login-status',err.message,'error')}}
+async function logout(){await api('/api/logout',{method:'POST',body:{}}).catch(()=>{});renderAuth(null);showView('landing')}
+function value(v){return v===null||v===undefined||v===''?'Not available':v}
+function renderSources(sources){el('sources').innerHTML='';if(!sources||!sources.length){el('sources').innerHTML='<div class="muted">Not available</div>';return}sources.forEach(s=>{const d=document.createElement('div');d.className='source';d.textContent=`Document: ${value(s.document||s.source||s.source_document)} | Page: ${value(s.page||s.source_page)} | Rank: ${value(s.rank)} | Distance: ${value(s.distance)}`;el('sources').appendChild(d)})}
+function renderResult(query,data){const t=data.telemetry||{};el('result-question').textContent=query;el('answer').textContent=value(data.answer);renderSources(data.sources);el('metric-initial').textContent=value(t.initial_k);el('metric-final').textContent=value(t.selected_k);el('metric-iterations').textContent=value(t.retrieval_iterations);el('metric-confidence').textContent=value(t.predicted_k_confidence);el('technical').textContent=JSON.stringify({mode:data.mode,initial_k:t.initial_k,predicted_k:t.predicted_k,selected_k:t.selected_k,maximum_k:t.maximum_k,retrieval_iterations:t.retrieval_iterations,k_escalated:t.k_escalated,verification_performed:t.verification_performed,verification_result:t.verification_result,chunks_retrieved:t.num_retrieved_chunks,chunks_used:t.num_chunks_used,unique_documents:t.unique_documents,prompt_tokens:t.prompt_tokens,generated_tokens:t.generated_tokens,total_tokens:t.total_tokens,retrieval_latency_ms:t.retrieval_time_ms,verification_latency_ms:t.verification_time_ms,optimization_latency_ms:t.optimization_time_ms,generation_latency_ms:t.generation_time_ms,total_latency_ms:t.total_latency_ms,retrieval_strategy:t.retrieval_strategy},null,2)}
+async function ask(){const query=el('question').value.trim();if(!query){setStatus('query-status','Question is required.','error');return}try{setStatus('query-status','Running retrieval...');const b=await api('/api/query',{method:'POST',body:{query,mode:el('mode').value}});renderResult(query,b);setStatus('query-status','Query completed.','success')}catch(err){setStatus('query-status',err.message,'error')}}
+async function loadHistory(){try{const b=await api('/api/history');lastHistory=b.history||[];el('history-note').textContent=b.schema_note||'';const body=el('history-body');body.innerHTML='';lastHistory.forEach((h,i)=>{const t=h.telemetry||{};const tr=document.createElement('tr');tr.className='history-row';tr.onclick=()=>el('history-detail').textContent=JSON.stringify(h,null,2);tr.innerHTML=`<td>${value(h.timestamp)}</td><td class="question-cell">${value(h.question)}</td><td>${value(h.mode)}</td><td>${value(h.initial_k)}</td><td>${value(h.selected_k)}</td><td>${value(t.num_chunks_used)}</td><td>${value(h.total_tokens)}</td><td>${value(h.total_latency_ms)}</td>`;body.appendChild(tr)});if(!lastHistory.length)body.innerHTML='<tr><td colspan="8" class="muted">No history available.</td></tr>'}catch(err){el('history-note').textContent=err.message}}
+async function upload(){try{const f=el('file').files[0];if(!f)throw Error('Choose a document first.');if(f.size>20*1024*1024)throw Error('File exceeds the 20 MB limit.');const content_base64=await new Promise((ok,no)=>{const reader=new FileReader();reader.onload=()=>ok(String(reader.result).split(',')[1]);reader.onerror=no;reader.readAsDataURL(f)});const b=await api('/api/hr/upload',{method:'POST',body:{filename:f.name,content_base64}});setStatus('upload-status',`${b.filename}: ${b.message} ${b.chunk_count} chunks indexed.`,'success')}catch(err){setStatus('upload-status',err.message,'error')}}
+document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>showView(b.dataset.view)));
+bootstrap();
+</script>
+</body>
+</html>
