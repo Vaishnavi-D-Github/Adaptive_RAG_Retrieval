@@ -205,7 +205,11 @@ def create_app(
     auth = auth_service or MySQLAuthService()
     sessions = session_store or SessionStore()
     user_history = history_store if history_store is not None else {}
-    static_dir = Path(__file__).with_name("static")
+    # The React/Vite presentation is built into frontend/dist.  Keep the
+    # lightweight legacy static page as a development fallback only.
+    static_dir = Path(__file__).resolve().parents[2] / "frontend" / "dist"
+    if not static_dir.exists():
+        static_dir = Path(__file__).with_name("static")
 
     def respond(start_response, status, body, headers=None):
         encoded = json.dumps(_jsonable(body), default=str).encode("utf-8")
@@ -255,13 +259,16 @@ def create_app(
 
     def application(environ, start_response):
         route, method = environ.get("PATH_INFO", "/"), environ.get("REQUEST_METHOD")
-        if method == "GET" and route in {"/", "/index.html"}:
-            page = (static_dir / "index.html").read_bytes()
-            start_response(
-                "200 OK",
-                [("Content-Type", "text/html; charset=utf-8"), ("Content-Length", str(len(page)))],
-            )
-            return [page]
+        if method == "GET" and not route.startswith("/api/"):
+            requested = static_dir / (route.lstrip("/") or "index.html")
+            # Vite assets are served directly; client routes fall back to the SPA.
+            if not requested.is_file():
+                requested = static_dir / "index.html"
+            if requested.is_file():
+                content_types = {".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".css": "text/css; charset=utf-8", ".svg": "image/svg+xml", ".png": "image/png", ".ico": "image/x-icon"}
+                page = requested.read_bytes()
+                start_response("200 OK", [("Content-Type", content_types.get(requested.suffix, "application/octet-stream")), ("Content-Length", str(len(page)))])
+                return [page]
         try:
             if method == "GET" and route == "/api/health":
                 return respond(
