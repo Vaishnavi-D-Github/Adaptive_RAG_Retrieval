@@ -24,6 +24,7 @@ class FixedKPipeline:
         tokenizer=None,
         max_k: int = 10,
         telemetry_store=None,
+        application: bool = False,
     ):
         self.retriever = RetrievalController(
             retriever
@@ -36,13 +37,15 @@ class FixedKPipeline:
         # Optional production telemetry persistence.
         # None means existing experiment behavior is unchanged.
         self.telemetry_store = telemetry_store
+        self.application = application
 
     def run(
         self,
         query: str,
         k: int,
-        *,
+        *,  
         generate: bool = True,
+        user_role: str = "student",
     ) -> dict:
 
         if k not in {3, 5, 10}:
@@ -56,6 +59,7 @@ class FixedKPipeline:
         retrieved = self.retriever.retrieve(
             query,
             k,
+            user_role=user_role,
         )
 
         retrieval_time_ms = (
@@ -73,19 +77,23 @@ class FixedKPipeline:
         ) * 1000
 
         context = build_context(
-            used
+            used,
+            application=self.application,
         )
 
         prompt = build_prompt(
             query,
             context,
+            application=self.application,
         )
 
         generated_text = ""
         generation_time_ms = 0.0
         generation_metadata = {}
 
-        if generate and self.generator:
+        if self.application and not used:
+            generated_text = "The information needed to answer this question was not found in the accessible documents."
+        elif generate and self.generator:
 
             generation_start = time.perf_counter()
 

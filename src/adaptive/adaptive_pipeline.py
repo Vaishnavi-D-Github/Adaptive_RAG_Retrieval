@@ -33,6 +33,7 @@ class AdaptivePipeline:
         tokenizer=None,
         max_k=10,
         telemetry_store=None,
+        application: bool = False,
     ):
 
         self.retrieval_controller = (
@@ -54,6 +55,7 @@ class AdaptivePipeline:
         self.max_k = max_k
 
         self.telemetry_store = telemetry_store
+        self.application = application
 
 
         # -----------------------------------------------------
@@ -150,10 +152,11 @@ class AdaptivePipeline:
 
 
     def run(
-        self,
-        query: str,
-        *,
-        generate=True,
+    self,
+    query: str,
+    *,
+    generate=True,
+    user_role: str = "student",
     ) -> AdaptiveResult:
 
         # =====================================================
@@ -206,6 +209,7 @@ class AdaptivePipeline:
                 .retrieve(
                     optimized_query,
                     current_k,
+                    user_role=user_role,
                 )
             )
 
@@ -228,6 +232,9 @@ class AdaptivePipeline:
                 verify_retrieval(
                     query,
                     retrieved,
+                    is_table_question=bool(getattr(features, "is_table_question", False)),
+                    requires_multiple_sources=bool(features.requires_multiple_sources),
+                    strict_coverage=self.application,
                 )
             )
             verification_time_ms = (time.perf_counter() - verification_start) * 1000
@@ -310,7 +317,8 @@ class AdaptivePipeline:
         # =====================================================
 
         context = build_context(
-            optimized_results
+            optimized_results,
+            application=self.application,
         )
 
 
@@ -321,6 +329,7 @@ class AdaptivePipeline:
         prompt = build_prompt(
             query,
             context,
+            application=self.application,
         )
 
 
@@ -333,7 +342,9 @@ class AdaptivePipeline:
         generation_time_ms = 0.0
         generation_metadata = {}
 
-        if generate:
+        if self.application and not optimized_results:
+            generated_text = "The information needed to answer this question was not found in the accessible documents."
+        elif generate:
 
             generated_text, generation_time_ms, generation_metadata = (
                 self._generate(

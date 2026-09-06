@@ -42,6 +42,7 @@ class QueryFeatures:
     requires_multiple_sources: bool
 
     expected_evidence_breadth: str
+    is_table_question: bool = False
 
 
 @dataclass

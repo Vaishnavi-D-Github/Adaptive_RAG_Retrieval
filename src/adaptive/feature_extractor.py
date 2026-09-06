@@ -60,6 +60,27 @@ DEFINITION_TERMS = {
 }
 
 
+TABLE_PHRASES = (
+    "according to the table",
+    "in the table",
+    "from the table",
+    "what percentage",
+    "which category",
+    "what amount",
+    "highest budget",
+    "maximum value",
+    "minimum value",
+    "list all",
+)
+
+
+def _is_table_question(text: str) -> bool:
+    return any(phrase in text for phrase in TABLE_PHRASES) or (
+        "table" in text
+        and any(token in text for token in ("compare", "category", "percentage", "amount", "value"))
+    )
+
+
 MULTI_HOP_TERMS = {
     "why",
     "how does",
@@ -300,4 +321,5 @@ def extract_features(
         expected_evidence_breadth=(
             evidence_breadth
         ),
+        is_table_question=_is_table_question(lower),
     )

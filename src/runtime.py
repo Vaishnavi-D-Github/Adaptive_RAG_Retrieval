@@ -10,6 +10,8 @@ from sentence_transformers import SentenceTransformer
 
 from adaptive.adaptive_pipeline import AdaptivePipeline
 from adaptive.config import (
+    APPLICATION_CHROMA_PATH,
+    APPLICATION_COLLECTION_NAME,
     CHROMA_PATH,
     EMBEDDING_MODEL,
     GENERATION_MODEL,
@@ -84,8 +86,10 @@ class OllamaGenerator:
             if field in response
         }
 
+        message = response.get("message") or {}
+        text = message.get("content") or message.get("thinking") or ""
         return GenerationResult(
-            response["message"]["content"],
+            str(text),
             ollama_metadata=metadata,
         )
 
@@ -94,6 +98,8 @@ def load_runtime(
     *,
     require_generator: bool = True,
     enable_telemetry_db: bool = False,
+    chroma_path=None,
+    collection_name: str = "enterprise_documents",
 ):
     """Create pipelines from the existing Chroma collection and model.
 
@@ -111,11 +117,11 @@ def load_runtime(
     """
 
     client = chromadb.PersistentClient(
-        path=str(CHROMA_PATH)
+        path=str(chroma_path or CHROMA_PATH)
     )
 
-    collection = client.get_collection(
-        "enterprise_documents"
+    collection = client.get_or_create_collection(
+        collection_name
     )
 
     embedding_model = SentenceTransformer(
@@ -164,6 +170,7 @@ def load_runtime(
         generator=generator,
         max_k=MAX_K,
         telemetry_store=telemetry_store,
+        application=collection_name == APPLICATION_COLLECTION_NAME,
     )
 
     fixed_pipeline = FixedKPipeline(
@@ -171,6 +178,7 @@ def load_runtime(
         generator=generator,
         max_k=MAX_K,
         telemetry_store=telemetry_store,
+        application=collection_name == APPLICATION_COLLECTION_NAME,
     )
 
     return (
@@ -178,4 +186,19 @@ def load_runtime(
         fixed_pipeline,
         collection,
         embedding_model,
+    )
+
+
+def load_application_runtime(
+    *,
+    require_generator: bool = True,
+    enable_telemetry_db: bool = True,
+):
+    """Load the final application runtime against application-uploaded documents only."""
+
+    return load_runtime(
+        require_generator=require_generator,
+        enable_telemetry_db=enable_telemetry_db,
+        chroma_path=APPLICATION_CHROMA_PATH,
+        collection_name=APPLICATION_COLLECTION_NAME,
     )

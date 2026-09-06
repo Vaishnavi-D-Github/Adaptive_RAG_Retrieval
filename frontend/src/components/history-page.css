@@ -1,0 +1,12 @@
+.history-page .history-list {
+  height: clamp(280px, 43dvh, 430px);
+  overflow-y: scroll;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+@media (max-width: 800px) {
+  .history-page .history-list {
+    height: clamp(240px, 45dvh, 360px);
+  }
+}

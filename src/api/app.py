@@ -5,6 +5,7 @@ from __future__ import annotations
 import base64
 import json
 import logging
+import mimetypes
 import os
 import secrets
 from dataclasses import asdict, is_dataclass
@@ -15,13 +16,36 @@ from wsgiref.simple_server import make_server
 
 import pymysql
 
+from adaptive.app_ingestion import (
+    build_chunks,
+    extract_document,
+    extract_pages,
+    sha256_bytes,
+    validate_chunks,
+    validate_embeddings,
+    verify_chroma_records,
+)
 from adaptive.auth import AuthError, DuplicateEmailError, MySQLAuthService, SafeUser
-from adaptive.config import FIXED_K_VALUES
+from adaptive.config import (
+    APPLICATION_CHROMA_PATH,
+    APPLICATION_COLLECTION_NAME,
+    FIXED_K_VALUES,
+    HISTORY_ROOT,
+    UPLOAD_ROOT,
+    load_project_env,
+)
+from adaptive.document_store import DuplicateDocumentError, MySQLDocumentStore
+from adaptive.history_store import FileHistoryStore
+from retrieval.chroma_retriever import ABSTAIN_NO_ACCESS, ChromaRetriever
+from adaptive.upload_store import UploadStore
+
+load_project_env()
 
 MAX_UPLOAD_BYTES = 20 * 1024 * 1024
 ALLOWED_SUFFIXES = {".pdf", ".docx", ".txt"}
 SESSION_COOKIE = "ae_rag_session"
 LOG = logging.getLogger(__name__)
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 
 def _jsonable(value):
@@ -32,60 +56,6 @@ def _jsonable(value):
     if isinstance(value, (list, tuple)):
         return [_jsonable(v) for v in value]
     return value
-
-
-def _extract_upload(name, raw):
-    suffix = Path(name).suffix.lower()
-    if suffix == ".txt":
-        return [{"page_number": 1, "text": raw.decode("utf-8", errors="replace")}]
-    if suffix == ".pdf":
-        try:
-            import pymupdf
-        except ImportError:
-            import fitz as pymupdf
-
-        document = pymupdf.open(stream=raw, filetype="pdf")
-        try:
-            return [
-                {"page_number": n, "text": page.get_text("text")}
-                for n, page in enumerate(document, 1)
-                if page.get_text("text").strip()
-            ]
-        finally:
-            document.close()
-    try:
-        from docx import Document
-    except ImportError as error:
-        raise ValueError("DOCX uploads require python-docx. Install requirements.txt and restart.") from error
-    import io
-
-    text = "\n".join(p.text for p in Document(io.BytesIO(raw)).paragraphs if p.text.strip())
-    return [{"page_number": 1, "text": text}] if text else []
-
-
-def _index_upload(name, raw, collection, embedding_model):
-    chunks = []
-    for page in _extract_upload(name, raw):
-        words, start = page["text"].split(), 0
-        while start < len(words):
-            text = " ".join(words[start : start + 500])
-            if text:
-                chunks.append({"page": page["page_number"], "text": text})
-            start += 400
-    if not chunks:
-        raise ValueError("The uploaded file does not contain extractable text.")
-    stem = "".join(c if c.isalnum() else "_" for c in Path(name).stem)
-    ids = [f"upload_{stem}_p{x['page']}_c{i}" for i, x in enumerate(chunks, 1)]
-    embeddings = embedding_model.encode([x["text"] for x in chunks])
-    if hasattr(embeddings, "tolist"):
-        embeddings = embeddings.tolist()
-    collection.upsert(
-        ids=ids,
-        documents=[x["text"] for x in chunks],
-        embeddings=embeddings,
-        metadatas=[{"document": name, "page": x["page"], "chunk_id": i} for i, x in enumerate(chunks, 1)],
-    )
-    return len(chunks)
 
 
 class SessionStore:
@@ -125,7 +95,23 @@ def _safe_result(result):
     data = _jsonable(result)
     if isinstance(data, dict):
         telemetry = data.get("telemetry") or {}
+        if isinstance(telemetry, dict):
+            telemetry = dict(telemetry)
+            aliases = {
+                "retrieval_time_ms": "retrieval_latency_ms",
+                "verification_time_ms": "verification_latency_ms",
+                "optimization_time_ms": "optimization_latency_ms",
+                "generation_time_ms": "generation_latency_ms",
+                "predicted_k_confidence": "prediction_confidence",
+            }
+            for source, target in aliases.items():
+                if source in telemetry and target not in telemetry:
+                    telemetry[target] = telemetry[source]
+                if target in telemetry and source not in telemetry:
+                    telemetry[source] = telemetry[target]
         answer = data.get("generation_result") or data.get("answer") or telemetry.get("generated_answer") or ""
+        if not isinstance(answer, str):
+            answer = "" if answer is None else str(answer)
         sources = telemetry.get("retrieved_sources") or data.get("sources") or []
         return {"answer": answer, "sources": sources, "telemetry": telemetry, "raw": data}
     return {"answer": str(data), "sources": [], "telemetry": {}, "raw": data}
@@ -201,15 +187,41 @@ def create_app(
     auth_service=None,
     session_store=None,
     history_store=None,
+    upload_root=None,
+    document_store=None,
 ):
     auth = auth_service or MySQLAuthService()
     sessions = session_store or SessionStore()
-    user_history = history_store if history_store is not None else {}
-    # The React/Vite presentation is built into frontend/dist.  Keep the
-    # lightweight legacy static page as a development fallback only.
-    static_dir = Path(__file__).resolve().parents[2] / "frontend" / "dist"
-    if not static_dir.exists():
-        static_dir = Path(__file__).with_name("static")
+    persistent_history = history_store if history_store is not None else FileHistoryStore(HISTORY_ROOT)
+    upload_store = UploadStore(UPLOAD_ROOT) if upload_root is None else UploadStore(Path(upload_root))
+    documents = document_store or MySQLDocumentStore()
+    frontend_dir = PROJECT_ROOT / "frontend" / "dist"
+    static_dir = frontend_dir if frontend_dir.exists() else Path(__file__).with_name("static")
+
+    def _history_append(user_id: str, record: dict) -> None:
+        if isinstance(persistent_history, dict):
+            persistent_history.setdefault(user_id, []).append(record)
+        else:
+            persistent_history.append(user_id, record)
+
+    def _history_list(user_id: str) -> list:
+        if isinstance(persistent_history, dict):
+            return list(reversed(persistent_history.get(user_id, [])))
+        return persistent_history.list_for_user(user_id)
+
+    def _has_accessible_documents(user_role: str) -> bool | None:
+        if collection is None or embedding_model is None:
+            if collection is not None and hasattr(collection, "count"):
+                return int(collection.count()) > 0
+            return None
+        return ChromaRetriever(collection, embedding_model).has_accessible_documents(user_role)
+
+    def _delete_indexed_document(document_id: str) -> None:
+        if collection is not None and hasattr(collection, "delete"):
+            collection.delete(where={"document_id": str(document_id)})
+        chunk_file = upload_store.chunks_path(document_id)
+        if chunk_file.exists():
+            chunk_file.unlink()
 
     def respond(start_response, status, body, headers=None):
         encoded = json.dumps(_jsonable(body), default=str).encode("utf-8")
@@ -221,6 +233,30 @@ def create_app(
             response_headers.extend(headers)
         start_response(status, response_headers)
         return [encoded]
+
+    def static_response(path: Path, start_response):
+        content_type = mimetypes.guess_type(str(path))[0] or "application/octet-stream"
+        page = path.read_bytes()
+        start_response(
+            "200 OK",
+            [("Content-Type", content_type), ("Content-Length", str(len(page)))],
+        )
+        return [page]
+
+    def resolve_static(route: str) -> Path | None:
+        if route in {"/", "/index.html"}:
+            return static_dir / "index.html"
+        candidate = (static_dir / route.lstrip("/")).resolve()
+        try:
+            candidate.relative_to(static_dir.resolve())
+        except ValueError:
+            return None
+        if candidate.is_file():
+            return candidate
+        if not route.startswith("/api/"):
+            fallback = static_dir / "index.html"
+            return fallback if fallback.exists() else None
+        return None
 
     def payload(environ):
         try:
@@ -259,16 +295,10 @@ def create_app(
 
     def application(environ, start_response):
         route, method = environ.get("PATH_INFO", "/"), environ.get("REQUEST_METHOD")
-        if method == "GET" and not route.startswith("/api/"):
-            requested = static_dir / (route.lstrip("/") or "index.html")
-            # Vite assets are served directly; client routes fall back to the SPA.
-            if not requested.is_file():
-                requested = static_dir / "index.html"
-            if requested.is_file():
-                content_types = {".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".css": "text/css; charset=utf-8", ".svg": "image/svg+xml", ".png": "image/png", ".ico": "image/x-icon"}
-                page = requested.read_bytes()
-                start_response("200 OK", [("Content-Type", content_types.get(requested.suffix, "application/octet-stream")), ("Content-Length", str(len(page)))])
-                return [page]
+        if method == "GET":
+            static_path = resolve_static(route)
+            if static_path is not None and static_path.exists():
+                return static_response(static_path, start_response)
         try:
             if method == "GET" and route == "/api/health":
                 return respond(
@@ -283,31 +313,18 @@ def create_app(
                 return respond(start_response, "200 OK", {"success": True, "user": user.to_dict()})
             if method == "GET" and route == "/api/history":
                 user = require_user(environ)
-                if user.role == "hr":
-                    try:
-                        runs = _load_rag_runs()
-                    except Exception:
-                        LOG.exception("Unable to load MySQL RAG history")
-                        runs = []
-                    return respond(
-                        start_response,
-                        "200 OK",
-                        {
-                            "success": True,
-                            "history": list(reversed(user_history.get(user.user_id, []))),
-                            "rag_runs": runs,
-                            "schema_note": "rag_runs has no user_id column; employee history is limited to authenticated web-session activity.",
-                        },
-                    )
+                history = _history_list(user.user_id)
                 return respond(
                     start_response,
                     "200 OK",
                     {
                         "success": True,
-                        "history": list(reversed(user_history.get(user.user_id, []))),
-                        "schema_note": "rag_runs has no user_id column; employee history is limited to authenticated web-session activity.",
+                        "history": history,
                     },
                 )
+            if method == "GET" and route == "/api/admin/documents":
+                require_role(environ, "admin")
+                return respond(start_response, "200 OK", {"success": True, "documents": documents.list_documents()})
 
             if method != "POST":
                 return respond(start_response, "405 Method Not Allowed", {"success": False, "error": "Unsupported method."})
@@ -316,11 +333,22 @@ def create_app(
             if route == "/api/signup":
                 if str(data.get("password", "")) != str(data.get("confirm_password", "")):
                     raise ValueError("Password confirmation does not match.")
+
+                signup_role = str(data.get("role", "")).strip().lower()
+
+                if signup_role == "admin":
+                    raise PermissionError(
+                        "Administrator accounts cannot be created through public signup."
+                    )
+
+                if signup_role not in {"student", "teacher", "office"}:
+                    raise ValueError("Role must be student, teacher, or office.")
+
                 user = auth.create_user(
                     full_name=data.get("full_name", ""),
                     email=data.get("email", ""),
                     password=data.get("password", ""),
-                    role=data.get("role", ""),
+                    role=signup_role,
                 )
                 return respond(
                     start_response,
@@ -351,18 +379,32 @@ def create_app(
                 )
             if route == "/api/query":
                 user = require_user(environ)
+                accessible = _has_accessible_documents(user.role)
+                if accessible is False:
+                    empty = {
+                        "mode": str(data.get("mode", "adaptive")).strip().lower(),
+                        "answer": ABSTAIN_NO_ACCESS,
+                        "sources": [],
+                        "telemetry": {
+                            "application_chroma_path": str(APPLICATION_CHROMA_PATH),
+                            "application_collection": APPLICATION_COLLECTION_NAME,
+                            "accessible_documents": False,
+                        },
+                    }
+                    _history_append(user.user_id, _history_record(user, str(data.get("query", "")).strip(), empty["mode"], empty))
+                    return respond(start_response, "200 OK", {"success": True, **empty})
                 query = str(data.get("query", "")).strip()
                 if not query:
                     raise ValueError("Query is required.")
                 mode = str(data.get("mode", "adaptive")).strip().lower()
                 if mode == "adaptive":
-                    result = adaptive_pipeline.run(query)
+                    result = adaptive_pipeline.run(query, user_role=user.role,)
                 elif mode in {f"fixed_{k}" for k in FIXED_K_VALUES}:
-                    result = fixed_pipeline.run(query, int(mode.split("_", 1)[1]))
+                    result = fixed_pipeline.run(query, int(mode.split("_", 1)[1]), user_role=user.role,)
                 else:
                     raise ValueError("Mode must be adaptive, fixed_3, fixed_5, or fixed_10.")
                 record = _history_record(user, query, mode, result)
-                user_history.setdefault(user.user_id, []).append(record)
+                _history_append(user.user_id, record)
                 normalized = _safe_result(result)
                 return respond(
                     start_response,
@@ -377,8 +419,14 @@ def create_app(
                         "history_entry": record,
                     },
                 )
-            if route == "/api/hr/upload":
-                require_role(environ, "hr")
+            if route == "/api/admin/upload":
+                user = require_role(environ, "admin")
+                access_level = str(data.get("access_level", "")).strip().lower()
+
+                if access_level not in {"student", "teacher", "office"}:
+                    raise ValueError(
+                        "Access level must be student, teacher, or office."
+                    )
                 if collection is None or embedding_model is None:
                     raise ValueError("Upload indexing is unavailable because the vector runtime was not initialized.")
                 name = Path(str(data.get("filename", ""))).name
@@ -392,17 +440,150 @@ def create_app(
                     raise ValueError("The uploaded file is empty.")
                 if len(raw) > MAX_UPLOAD_BYTES:
                     raise ValueError("Upload exceeds the 20 MB limit.")
+                content_hash = sha256_bytes(raw)
+                stored_filename = upload_store.stored_filename(filename=name, content_hash=content_hash)
+                stored_path = upload_store.document_path(stored_filename)
+                document = documents.create_pending(
+                    original_filename=name,
+                    stored_filename=stored_filename,
+                    storage_path=str(stored_path),
+                    file_type=Path(name).suffix.lower().lstrip("."),
+                    file_size=len(raw),
+                    content_hash=content_hash,
+                    uploaded_by=user.user_id,
+                    access_level=access_level,
+                )
+                document_id = document["document_id"]
+                try:
+                    upload_store.save_original(stored_filename=stored_filename, raw=raw)
+                    documents.update_status(document_id, "EXTRACTING")
+                    pages, tables = extract_document(name, raw)
+                    page_count = len(pages)
+                    word_count = sum(len(page.text.split()) for page in pages)
+                    char_count = sum(len(page.text) for page in pages)
+                    documents.update_status(
+                        document_id,
+                        "CHUNKING",
+                        page_count=page_count,
+                        extracted_word_count=word_count,
+                        extracted_character_count=char_count,
+                    )
+                    chunks = build_chunks(document_id=document_id, document_name=name, access_level=access_level, pages=pages, tables=tables)
+                    validate_chunks(chunks)
+                    chunk_dicts = [chunk.to_dict() for chunk in chunks]
+                    chunks_path = upload_store.save_chunks(document_id=document_id, filename=name, chunks=chunk_dicts)
+                    if len(chunk_dicts) != len(chunks):
+                        raise ValueError("Stored chunk count does not match generated chunk count.")
+                    documents.update_status(document_id, "EMBEDDING", chunk_count=len(chunks))
+                    embeddings = validate_embeddings(embedding_model.encode([chunk.text for chunk in chunks]), len(chunks))
+                    documents.update_status(document_id, "INDEXING", embedding_count=len(embeddings))
+                    ids = [chunk.chroma_id for chunk in chunks]
+                    collection.upsert(
+                        ids=ids,
+                        documents=[chunk.text for chunk in chunks],
+                        embeddings=embeddings,
+                        metadatas=[chunk.metadata() for chunk in chunks],
+                    )
+                    verified_count = verify_chroma_records(collection, ids)
+                    documents.update_status(
+                        document_id,
+                        "INDEXED",
+                        page_count=page_count,
+                        extracted_word_count=word_count,
+                        extracted_character_count=char_count,
+                        chunk_count=len(chunks),
+                        embedding_count=len(embeddings),
+                        chroma_record_count=len(ids),
+                        chroma_verified_count=verified_count,
+                        metadata_json={
+                            "application_chroma_path": str(APPLICATION_CHROMA_PATH),
+                            "application_collection": APPLICATION_COLLECTION_NAME,
+                            "access_level": access_level,
+                            "sample_chunk_id": ids[0],
+                            "sample_page": chunks[0].page_number,
+                            "sample_text_preview": chunks[0].text[:160],
+                            "table_chunk_count": sum(1 for chunk in chunks if chunk.content_type == "table"),
+                            "chunks_path": str(chunks_path),
+                        },
+                    )
+                except Exception as error:
+                    documents.update_status(document_id, "FAILED", error_message=str(error))
+                    raise
                 return respond(
                     start_response,
                     "201 Created",
                     {
                         "success": True,
                         "filename": name,
-                        "chunk_count": _index_upload(name, raw, collection, embedding_model),
-                        "message": "Document indexed successfully.",
+                        "document_id": document_id,
+                        "access_level": access_level,
+                        "content_hash": content_hash,
+                        "status": "INDEXED",
+                        "page_count": page_count,
+                        "pages_processed": page_count,
+                        "extracted_word_count": word_count,
+                        "extracted_character_count": char_count,
+                        "chunk_count": len(chunks),
+                        "table_chunk_count": sum(1 for chunk in chunks if chunk.content_type == "table"),
+                        "chunks_stored": len(chunk_dicts),
+                        "embedding_count": len(embeddings),
+                        "chroma_record_count": len(ids),
+                        "chroma_verified_count": verified_count,
+                        "application_chroma_path": str(APPLICATION_CHROMA_PATH),
+                        "application_collection": APPLICATION_COLLECTION_NAME,
+                        "document_path": stored_filename,
+                        "chunks_path": Path(chunks_path).name,
+                        "message": "Document stored and indexed successfully.",
                     },
                 )
+            if route == "/api/admin/delete":
+                require_role(environ, "admin")
+                document_id = str(data.get("document_id", "")).strip()
+                record = documents.get(document_id) if document_id else None
+                if not record or record.get("status") == "DELETED":
+                    raise ValueError("Document was not found.")
+                _delete_indexed_document(document_id)
+                stored = Path(str(record.get("storage_path") or ""))
+                if stored.is_file():
+                    stored.unlink()
+                documents.mark_deleted(document_id)
+                return respond(start_response, "200 OK", {"success": True, "document_id": document_id, "status": "DELETED", "message": "Document and indexed chunks were removed."})
+            if route == "/api/admin/reindex":
+                user = require_role(environ, "admin")
+                document_id = str(data.get("document_id", "")).strip()
+                record = documents.get(document_id) if document_id else None
+                if not record or record.get("status") == "DELETED":
+                    raise ValueError("Document was not found.")
+                stored = Path(str(record.get("storage_path") or ""))
+                if not stored.is_file():
+                    raise ValueError("Original file is missing; reindex is not possible.")
+                raw = stored.read_bytes()
+                access_level = str(record.get("access_level") or "student")
+                name = record.get("original_filename") or stored.name
+                _delete_indexed_document(document_id)
+                documents.update_status(document_id, "EXTRACTING")
+                pages, tables = extract_document(name, raw)
+                chunks = build_chunks(document_id=document_id, document_name=name, access_level=access_level, pages=pages, tables=tables)
+                validate_chunks(chunks)
+                upload_store.save_chunks(document_id=document_id, filename=name, chunks=[chunk.to_dict() for chunk in chunks])
+                embeddings = validate_embeddings(embedding_model.encode([chunk.text for chunk in chunks]), len(chunks))
+                ids = [chunk.chroma_id for chunk in chunks]
+                collection.upsert(ids=ids, documents=[chunk.text for chunk in chunks], embeddings=embeddings, metadatas=[chunk.metadata() for chunk in chunks])
+                verified_count = verify_chroma_records(collection, ids)
+                documents.update_status(
+                    document_id,
+                    "INDEXED",
+                    page_count=len(pages),
+                    chunk_count=len(chunks),
+                    embedding_count=len(embeddings),
+                    chroma_record_count=len(ids),
+                    chroma_verified_count=verified_count,
+                    error_message=None,
+                )
+                return respond(start_response, "200 OK", {"success": True, "document_id": document_id, "status": "INDEXED", "chunk_count": len(chunks), "chroma_verified_count": verified_count})
             return respond(start_response, "404 Not Found", {"success": False, "error": "Unknown endpoint."})
+        except DuplicateDocumentError as error:
+            return respond(start_response, "409 Conflict", {"success": False, "error": str(error)})
         except DuplicateEmailError as error:
             return respond(start_response, "409 Conflict", {"success": False, "error": str(error)})
         except PermissionError as error:
@@ -418,11 +599,16 @@ def create_app(
 
 def main():
     logging.basicConfig(level=os.getenv("AE_RAG_LOG_LEVEL", "INFO"))
-    from runtime import load_runtime
+    from runtime import load_application_runtime
 
-    adaptive, fixed, collection, embedding_model = load_runtime(enable_telemetry_db=True)
+    adaptive, fixed, collection, embedding_model = load_application_runtime(enable_telemetry_db=True)
+    try:
+        MySQLAuthService().ensure_bootstrap_admin()
+    except Exception:
+        LOG.exception("Administrator bootstrap from environment variables was skipped.")
     host, port = os.getenv("AE_RAG_HOST", "127.0.0.1"), int(os.getenv("AE_RAG_PORT", "8000"))
     print(f"Adaptive Enterprise RAG is running at http://{host}:{port}")
+    print(f"Application ChromaDB: {APPLICATION_CHROMA_PATH} / {APPLICATION_COLLECTION_NAME}")
     print("Authentication uses the existing MySQL users table and HttpOnly session cookies.")
     make_server(host, port, create_app(adaptive, fixed, collection=collection, embedding_model=embedding_model)).serve_forever()
 

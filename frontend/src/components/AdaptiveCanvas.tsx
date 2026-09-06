@@ -16,7 +16,7 @@ export function AdaptiveCanvas({ user, onPrompt }: { user: User; onPrompt: (prom
     <motion.div className="canvas-intro" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .55 }}>
       <span className="eyebrow">ADAPTIVE RETRIEVAL ENGINE · ONLINE</span>
       <h1>Explore your<br/><em>knowledge network.</em></h1>
-      <p>Ask one question. The system chooses and verifies the evidence depth before it answers.</p>
+      <p>Workspace ready for {user.full_name}. Ask one question. The system chooses and verifies the evidence depth before it answers.</p>
       <div className="canvas-prompts">{prompts.map((prompt, index) => <motion.button key={prompt} initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: .17 + index * .08 }} onClick={() => onPrompt(prompt)}><span>0{index + 1}</span>{prompt}<ArrowUpRight size={15}/></motion.button>)}</div>
     </motion.div>
     <motion.div className="network-stage" initial={{ opacity: 0, scale: .92 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: .7, delay: .12 }}>
@@ -30,7 +30,6 @@ export function AdaptiveCanvas({ user, onPrompt }: { user: User; onPrompt: (prom
       <svg className="network-lines" viewBox="0 0 500 500" aria-hidden="true"><path d="M250 250 L115 145 M250 250 L387 158 M250 250 L128 362 M250 250 L381 352"/><path className="pulse-path" d="M250 250 L115 145 M250 250 L387 158 M250 250 L128 362 M250 250 L381 352"/></svg>
       <div className="stage-status"><span><i/> Adaptive engine ready</span><b><Orbit size={15}/> 4 intelligent stages</b></div>
     </motion.div>
-    <motion.div className="canvas-user" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: .8 }}><span>{user.full_name.split(" ")[0].slice(0, 2).toUpperCase()}</span><div><small>YOUR WORKSPACE</small><b>Ready for a new investigation</b></div></motion.div>
   </div>;
 }
 function Node({ className, icon, label }: { className: string; icon: ReactNode; label: string }) { return <motion.div className={`network-node ${className}`} animate={{ y: [0, -5, 0] }} transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: className.includes("db") ? .5 : 0 }}><span>{icon}</span><b>{label}</b></motion.div> }

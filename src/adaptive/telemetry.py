@@ -182,6 +182,11 @@ def build_telemetry(
             "page": metadata.get("page") or metadata.get("source_page"),
             "rank": rank,
             "distance": item.get("distance") if isinstance(item, dict) else None,
+            "chunk_id": metadata.get("chunk_id"),
+            "content_type": metadata.get("content_type"),
+            "table_index": metadata.get("table_index"),
+            "table_title": metadata.get("table_title"),
+            "text": str(item.get("document") or "")[:240] if isinstance(item, dict) else None,
         })
 
 

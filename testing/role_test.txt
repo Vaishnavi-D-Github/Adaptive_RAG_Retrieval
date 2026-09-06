@@ -1,0 +1,9 @@
+Role Access Control Test Document
+
+This document is specifically created to test enterprise document access control.
+
+The student access test code is STUDENT_TEST_123.
+
+The teacher access test code is TEACHER_TEST_456.
+
+The office access test code is OFFICE_TEST_789.

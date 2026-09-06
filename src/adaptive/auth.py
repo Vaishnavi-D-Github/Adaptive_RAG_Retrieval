@@ -19,7 +19,7 @@ from argon2.exceptions import VerifyMismatchError, VerificationError
 from argon2.low_level import Type
 
 
-VALID_ROLES = {"employee", "hr"}
+VALID_ROLES = {"admin", "student", "teacher", "office"}
 
 
 class AuthError(ValueError):
@@ -55,7 +55,7 @@ def normalize_email(email: str) -> str:
 def validate_role(role: str) -> str:
     normalized = str(role or "").strip().lower()
     if normalized not in VALID_ROLES:
-        raise AuthError("Role must be employee or hr.")
+        raise AuthError("Role must be admin, student, teacher, or office.")
     return normalized
 
 
@@ -136,6 +136,38 @@ class MySQLAuthService:
             connection.close()
 
         return SafeUser(user_id, name, normalized_email, normalized_role, True)
+
+    def get_user_by_email(self, email: str) -> Optional[SafeUser]:
+        normalized_email = normalize_email(email)
+        if not normalized_email:
+            return None
+        connection = self._connect()
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """
+                    SELECT user_id, full_name, email, role, is_active
+                    FROM users
+                    WHERE email = %s
+                    LIMIT 1
+                    """,
+                    (normalized_email,),
+                )
+                row = cursor.fetchone()
+                return self._safe_user(row) if row else None
+        finally:
+            connection.close()
+
+    def ensure_bootstrap_admin(self) -> Optional[SafeUser]:
+        email = os.getenv("AE_RAG_ADMIN_EMAIL", "").strip()
+        password = os.getenv("AE_RAG_ADMIN_PASSWORD", "")
+        name = os.getenv("AE_RAG_ADMIN_NAME", "Administrator").strip() or "Administrator"
+        if not email or not password:
+            return None
+        existing = self.get_user_by_email(email)
+        if existing:
+            return existing
+        return self.create_user(full_name=name, email=email, password=password, role="admin")
 
     def authenticate_user(self, *, email: str, password: str) -> SafeUser:
         normalized_email = normalize_email(email)

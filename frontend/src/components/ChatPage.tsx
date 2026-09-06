@@ -1,19 +1,209 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowUp, ChevronDown, FileText, LoaderCircle, Paperclip, Sparkles } from "lucide-react";
+import { ArrowUp, ChevronDown, FileText, LoaderCircle, Sparkles } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { api } from "../services/api";
 import type { Mode, QueryResult, Source, Telemetry, User } from "../types";
 import { AdaptiveCanvas } from "./AdaptiveCanvas";
-const suggestions = ["Summarize the employee leave policy", "What are the key findings from the latest audit?", "Compare the current policy with the previous policy", "How do I submit an expense claim?"];
-export function ChatPage({ user }: { user: User }) { const [messages, setMessages] = useState<{ query: string; result: QueryResult }[]>([]), [query, setQuery] = useState(""), [mode, setMode] = useState<Mode>("adaptive"), [loading, setLoading] = useState(false), [error, setError] = useState("");
- const send = async (event?: FormEvent, preset?: string) => { event?.preventDefault(); const question = (preset ?? query).trim(); if (!question || loading) return; setQuery(""); setError(""); setLoading(true); try { const result = await api.query(question, mode); setMessages(old => [...old, { query: question, result }]); } catch (e) { setError(e instanceof Error ? e.message : "Unable to process your question. Please try again."); setQuery(question); } finally { setLoading(false); } };
- return <div className={`chat-page ${messages.length ? "has-messages" : ""}`}><div className="chat-scroll">{messages.length === 0 ? <Welcome user={user} send={send}/> : <div className="conversation">{messages.map((message, index) => <Message key={index} {...message}/>) }<AnimatePresence>{loading && <motion.div className="thinking" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}><LoaderCircle className="spin" size={18}/><span>Analyzing your query…</span><small>The response appears after retrieval and verification complete.</small></motion.div>}</AnimatePresence></div>}</div>{error && <div className="toast-error">{error}</div>}<form className="composer" onSubmit={send}><textarea value={query} onChange={e => setQuery(e.target.value)} onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }} disabled={loading} rows={1} maxLength={5000} placeholder="Ask anything about your enterprise knowledge…" aria-label="Your enterprise knowledge question"/><div className="composer-controls"><button type="button" className="attach" aria-label="Attachments are not yet supported by the query API" title="Attachments are not yet supported"><Paperclip size={18}/></button><label className="mode-select"><select value={mode} onChange={e => setMode(e.target.value as Mode)} aria-label="Retrieval mode"><option value="adaptive">Adaptive</option><option value="fixed_3">Fixed K = 3</option><option value="fixed_5">Fixed K = 5</option><option value="fixed_10">Fixed K = 10</option></select><ChevronDown size={14}/></label><button className="send-button" disabled={!query.trim() || loading} aria-label="Send question"><ArrowUp size={18}/></button></div></form><p className="composer-caption">Adaptive mode chooses evidence depth based on your question. Responses are grounded in retrieved sources.</p></div> }
-function Welcome({ user, send }: { user: User; send: (event?: FormEvent, preset?: string) => Promise<void> }) { return <AdaptiveCanvas user={user} onPrompt={(prompt) => { void send(undefined, prompt); }} /> }
-function Message({ query, result }: { query: string; result: QueryResult }) { return <article className="message"><div className="user-message"><span>YOU</span><p>{query}</p></div><div className="answer-block"><div className="assistant-label"><div className="assistant-icon"><Sparkles size={15}/></div><span>ADAPTIVE ENTERPRISE RAG</span><i>{result.mode === "adaptive" ? "Adaptive retrieval" : result.mode.replace("_", " ")}</i></div><div className="markdown"><ReactMarkdown>{result.answer || "No answer was returned."}</ReactMarkdown></div><Sources sources={result.sources}/><Retrieval telemetry={result.telemetry} /></div></article> }
-function Sources({ sources }: { sources: Source[] }) { return <section className="sources"><h3><FileText size={16}/> Sources</h3>{sources?.length ? <div className="source-grid">{sources.map((source, index) => <div className="source-card" key={index}><b>{String(source.document || source.source || source.source_document || "Unnamed document")}</b><span>Page {String(source.page ?? source.source_page ?? "—")} · Rank {String(source.rank ?? index + 1)}</span>{(source.text || source.content) && <p>{String(source.text || source.content).slice(0, 180)}</p>}</div>)}</div> : <p className="unavailable">Sources unavailable</p>}</section> }
-function val(v: unknown) { return v === undefined || v === null || v === "" ? "—" : typeof v === "boolean" ? (v ? "Yes" : "No") : String(v); }
-function percentage(v: unknown) { return typeof v === "number" ? `${Math.round(v * 100)}%` : val(v); }
-function Retrieval({ telemetry }: { telemetry: Telemetry }) { const [expanded, setExpanded] = useState(false); const confidence = telemetry.prediction_confidence ?? telemetry.predicted_k_confidence; const initial = telemetry.initial_k, selected = telemetry.selected_k, iterations = telemetry.retrieval_iterations; const escalated = telemetry.k_escalated === true || (typeof initial === "number" && typeof selected === "number" && selected > initial); const details = [["Query complexity", telemetry.query_complexity ?? telemetry.predicted_complexity], ["Initial K", initial], ["Predicted K", telemetry.predicted_k], ["Selected K", selected], ["Maximum K", telemetry.maximum_k], ["Retrieval iterations", iterations], ["Retrieval strategy", telemetry.retrieval_strategy], ["Chunks retrieved", telemetry.num_retrieved_chunks], ["Chunks used", telemetry.num_chunks_used], ["Unique documents", telemetry.unique_documents], ["Verification result", telemetry.verification_result], ["Retrieval latency", telemetry.retrieval_latency_ms], ["Verification latency", telemetry.verification_latency_ms], ["Context optimization latency", telemetry.optimization_latency_ms ?? telemetry.context_optimization_latency_ms], ["Generation latency", telemetry.generation_latency_ms], ["Total latency", telemetry.total_latency_ms], ["Prompt tokens", telemetry.prompt_tokens], ["Generated tokens", telemetry.generated_tokens], ["Total tokens", telemetry.total_tokens]].filter(([, value]) => value !== undefined);
- return <section className="retrieval"><div className="retrieval-heading"><div><span className="eyebrow">SYSTEM DIAGNOSTICS</span><h3>Adaptive Retrieval</h3></div><span className={`verification ${telemetry.verification_result === false ? "failed" : ""}`}>{telemetry.verification_performed === false ? "Not reported" : telemetry.verification_result === false ? "Verification failed" : "Evidence checked"}</span></div><div className="metrics"><Metric label="Initial K" value={val(initial)}/><Metric label="Selected K" value={val(selected)}/><Metric label="Iterations" value={val(iterations)}/><Metric label="Confidence" value={percentage(confidence)}/></div><div className="timeline"><Step label="Query analysis" active/><Step label="K prediction" active/><Step label="Retrieve" active/><Step label="Verify" active/><Step label={escalated ? "Expanded retrieval" : "Generate"} active={escalated}/><Step label="Generate" active/></div>{escalated && <p className="escalation">Evidence threshold required a deeper retrieval pass: K moved from {val(initial)} to {val(selected)}.</p>}<button className="technical-toggle" onClick={() => setExpanded(!expanded)}>Technical details <ChevronDown className={expanded ? "up" : ""} size={16}/></button>{expanded && <dl className="technical-details">{details.length ? details.map(([label, value]) => <div key={String(label)}><dt>{label}</dt><dd>{val(value)}</dd></div>) : <p>Telemetry was not returned for this result.</p>}</dl>}</section> }
-function Metric({ label, value }: { label: string; value: string }) { return <div><b>{value}</b><span>{label}</span></div> } function Step({ label, active }: { label: string; active?: boolean }) { return <span className={active ? "complete" : ""}><i/>{label}</span> }
+
+function extractAnswer(result: QueryResult | Record<string, any> | undefined): string {
+  if (!result) return "";
+  const raw = result as Record<string, any>;
+  const candidates = [
+    raw.answer,
+    raw.history_entry?.answer,
+    raw.result?.generation_result,
+    raw.result?.answer,
+    raw.telemetry?.generated_answer,
+    raw.generation_result,
+  ];
+  for (const value of candidates) {
+    if (typeof value === "string" && value.trim()) return value.trim();
+  }
+  return "";
+}
+
+export function ChatPage({ user }: { user: User }) {
+  const [messages, setMessages] = useState<{ query: string; result: QueryResult }[]>([]);
+  const [query, setQuery] = useState("");
+  const [mode, setMode] = useState<Mode>("adaptive");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const endRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ block: "end", behavior: "smooth" });
+  }, [messages, loading]);
+
+  const send = async (event?: FormEvent, preset?: string) => {
+    event?.preventDefault();
+    const question = (preset ?? query).trim();
+    if (!question || loading) return;
+    setQuery("");
+    setError("");
+    setLoading(true);
+    try {
+      const result = await api.query(question, mode);
+      setMessages(old => [...old, { query: question, result }]);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Unable to process your question. Please try again.");
+      setQuery(question);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className={`chat-page ${messages.length ? "has-messages" : ""}`}>
+      <div className="chat-scroll">
+        {messages.length === 0 ? (
+          <Welcome user={user} send={send} />
+        ) : (
+          <div className="conversation">
+            {messages.map((message, index) => <Message key={index} {...message} />)}
+            <AnimatePresence>
+              {loading && (
+                <motion.div className="thinking" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                  <LoaderCircle className="spin" size={18} />
+                  <span>Analyzing your query…</span>
+                  <small>The response appears after retrieval and verification complete.</small>
+                </motion.div>
+              )}
+            </AnimatePresence>
+            <div ref={endRef} />
+          </div>
+        )}
+      </div>
+      {error && <div className="toast-error">{error}</div>}
+      <form className="composer" onSubmit={send}>
+        <textarea
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+          onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); void send(); } }}
+          disabled={loading}
+          rows={1}
+          maxLength={5000}
+          placeholder="Ask anything about your enterprise knowledge…"
+          aria-label="Your enterprise knowledge question"
+        />
+        <div className="composer-controls">
+          <label className="mode-select">
+            <select value={mode} onChange={e => setMode(e.target.value as Mode)} aria-label="Retrieval mode">
+              <option value="adaptive">Adaptive</option>
+              <option value="fixed_3">Fixed K = 3</option>
+              <option value="fixed_5">Fixed K = 5</option>
+              <option value="fixed_10">Fixed K = 10</option>
+            </select>
+            <ChevronDown size={14} />
+          </label>
+          <button className="send-button" disabled={!query.trim() || loading} aria-label="Send question">
+            <ArrowUp size={18} />
+          </button>
+        </div>
+      </form>
+      <p className="composer-caption">Adaptive mode chooses evidence depth based on your question. Responses are grounded in retrieved sources.</p>
+    </div>
+  );
+}
+
+function Welcome({ user, send }: { user: User; send: (event?: FormEvent, preset?: string) => Promise<void> }) {
+  return <AdaptiveCanvas user={user} onPrompt={(prompt) => { void send(undefined, prompt); }} />;
+}
+
+function Message({ query, result }: { query: string; result: QueryResult }) {
+  const answer = extractAnswer(result);
+  const modeLabel = result.mode === "adaptive" ? "Adaptive retrieval" : String(result.mode || "adaptive").replace("_", " ");
+  return (
+    <article className="message">
+      <div className="user-message"><span>YOU</span><p>{query}</p></div>
+      <div className="answer-block">
+        <div className="assistant-label">
+          <div className="assistant-icon"><Sparkles size={15} /></div>
+          <span>ADAPTIVE ENTERPRISE RAG</span>
+          <i>{modeLabel}</i>
+        </div>
+        <div className="markdown">
+          <ReactMarkdown>{answer || "No answer was returned."}</ReactMarkdown>
+        </div>
+        <Sources sources={result.sources || []} />
+        <Retrieval telemetry={result.telemetry || {}} />
+      </div>
+    </article>
+  );
+}
+
+function Sources({ sources }: { sources: Source[] }) {
+  return (
+    <section className="sources">
+      <h3><FileText size={16} /> Sources</h3>
+      {sources?.length ? (
+        <div className="source-grid">
+          {sources.map((source, index) => (
+            <div className="source-card" key={index}>
+              <b>{String(source.document || source.source || source.source_document || "Unnamed document")}</b>
+              <span>Page {String(source.page ?? source.source_page ?? "—")} · Rank {String(source.rank ?? index + 1)}</span>
+              {(source.text || source.content) && <p>{String(source.text || source.content).slice(0, 180)}</p>}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="unavailable">Sources unavailable</p>
+      )}
+    </section>
+  );
+}
+
+function val(v: unknown) {
+  return v === undefined || v === null || v === "" ? "—" : typeof v === "boolean" ? (v ? "Yes" : "No") : String(v);
+}
+function percentage(v: unknown) {
+  return typeof v === "number" ? `${Math.round(v * 100)}%` : val(v);
+}
+
+function Retrieval({ telemetry }: { telemetry: Telemetry }) {
+  const [expanded, setExpanded] = useState(false);
+  const confidence = telemetry.prediction_confidence ?? telemetry.predicted_k_confidence;
+  const initial = telemetry.initial_k, selected = telemetry.selected_k, iterations = telemetry.retrieval_iterations;
+  const escalated = telemetry.k_escalated === true || (typeof initial === "number" && typeof selected === "number" && selected > initial);
+  const details = [
+    ["Query complexity", telemetry.query_complexity ?? telemetry.predicted_complexity],
+    ["Initial K", initial], ["Predicted K", telemetry.predicted_k], ["Selected K", selected], ["Maximum K", telemetry.maximum_k],
+    ["Retrieval iterations", iterations], ["Retrieval strategy", telemetry.retrieval_strategy],
+    ["Chunks retrieved", telemetry.num_retrieved_chunks], ["Chunks used", telemetry.num_chunks_used], ["Unique documents", telemetry.unique_documents],
+    ["Verification result", telemetry.verification_result], ["Retrieval latency", telemetry.retrieval_latency_ms],
+    ["Verification latency", telemetry.verification_latency_ms],
+    ["Context optimization latency", telemetry.optimization_latency_ms ?? telemetry.context_optimization_latency_ms],
+    ["Generation latency", telemetry.generation_latency_ms], ["Total latency", telemetry.total_latency_ms],
+    ["Prompt tokens", telemetry.prompt_tokens], ["Generated tokens", telemetry.generated_tokens], ["Total tokens", telemetry.total_tokens],
+  ].filter(([, value]) => value !== undefined);
+  return (
+    <section className="retrieval">
+      <div className="retrieval-heading">
+        <div><span className="eyebrow">SYSTEM DIAGNOSTICS</span><h3>Adaptive Retrieval</h3></div>
+        <span className={`verification ${telemetry.verification_result === false ? "failed" : ""}`}>
+          {telemetry.verification_performed === false ? "Not reported" : telemetry.verification_result === false ? "Verification failed" : "Evidence checked"}
+        </span>
+      </div>
+      <div className="metrics">
+        <Metric label="Initial K" value={val(initial)} />
+        <Metric label="Selected K" value={val(selected)} />
+        <Metric label="Iterations" value={val(iterations)} />
+        <Metric label="Confidence" value={percentage(confidence)} />
+      </div>
+      <div className="timeline">
+        <Step label="Query analysis" active /><Step label="K prediction" active /><Step label="Retrieve" active /><Step label="Verify" active />
+        <Step label={escalated ? "Expanded retrieval" : "Generate"} active={escalated} /><Step label="Generate" active />
+      </div>
+      {escalated && <p className="escalation">Evidence threshold required a deeper retrieval pass: K moved from {val(initial)} to {val(selected)}.</p>}
+      <button className="technical-toggle" onClick={() => setExpanded(!expanded)}>Technical details <ChevronDown className={expanded ? "up" : ""} size={16} /></button>
+      {expanded && <dl className="technical-details">{details.length ? details.map(([label, value]) => <div key={String(label)}><dt>{label}</dt><dd>{val(value)}</dd></div>) : <p>Telemetry was not returned for this result.</p>}</dl>}
+    </section>
+  );
+}
+
+function Metric({ label, value }: { label: string; value: string }) {
+  return <div><b>{value}</b><span>{label}</span></div>;
+}
+function Step({ label, active }: { label: string; active?: boolean }) {
+  return <span className={active ? "complete" : ""}><i />{label}</span>;
+}

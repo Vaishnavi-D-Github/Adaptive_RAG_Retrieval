@@ -23,19 +23,6 @@ If PowerShell blocks activation, run the commands with `.\.venv\Scripts\python.e
 
 ## Run the website
 
-Build the React frontend once (or after making UI changes):
-
-```powershell
-cd frontend
-npm install
-npm run build
-cd ..
-```
-
-The WSGI app automatically serves `frontend/dist` when present. If it has not
-yet been built, it falls back to the legacy static page so the API remains
-usable.
-
 In a separate terminal, start Ollama and ensure the configured generation model is available:
 
 ```powershell

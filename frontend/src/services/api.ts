@@ -1,4 +1,4 @@
-import type { HistoryEntry, Mode, QueryResult, Role, User } from "../types";
+import type { DocumentRecord, HistoryEntry, Mode, QueryResult, Role, User } from "../types";
 
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   try {
@@ -13,7 +13,29 @@ export const api = {
   login: (email: string, password: string) => request<{ user: User }>("/api/login", { method: "POST", body: JSON.stringify({ email, password }) }),
   signup: (data: { full_name: string; email: string; password: string; confirm_password: string; role: Role }) => request<{ message: string }>("/api/signup", { method: "POST", body: JSON.stringify(data) }),
   logout: () => request("/api/logout", { method: "POST", body: "{}" }),
-  query: (query: string, mode: Mode) => request<QueryResult>("/api/query", { method: "POST", body: JSON.stringify({ query, mode }) }),
+  query: async (query: string, mode: Mode) => {
+    const payload = await request<QueryResult & Record<string, any>>("/api/query", { method: "POST", body: JSON.stringify({ query, mode }) });
+    const nested = payload.result as Record<string, any> | undefined;
+    const answer = [payload.answer, payload.history_entry?.answer, nested?.generation_result, nested?.answer, payload.telemetry?.generated_answer]
+      .find(value => typeof value === "string" && value.trim()) || "";
+    return { ...payload, answer, sources: payload.sources || [], telemetry: payload.telemetry || {} };
+  },
   history: () => request<{ history: HistoryEntry[]; rag_runs?: HistoryEntry[]; schema_note?: string }>("/api/history"),
-  upload: (filename: string, content_base64: string) => request<{ filename: string; chunk_count: number; message: string }>("/api/hr/upload", { method: "POST", body: JSON.stringify({ filename, content_base64 }) })
+  documents: () => request<{ documents: DocumentRecord[] }>("/api/admin/documents"),
+  upload: (
+    filename: string,
+    content_base64: string,
+    access_level: "student" | "teacher" | "office"
+  ) =>
+    request<{ filename: string; chunk_count: number; message: string }>(
+      "/api/admin/upload",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          filename,
+          content_base64,
+          access_level,
+        }),
+      }
+    )
 };

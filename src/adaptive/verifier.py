@@ -33,6 +33,9 @@ def verify_retrieval(
     *,
     minimum_results: int = 1,
     relevance_threshold: float = 0.35,
+    is_table_question: bool = False,
+    requires_multiple_sources: bool = False,
+    strict_coverage: bool = False,
 ) -> VerificationResult:
 
     if not retrieved_results:
@@ -127,23 +130,25 @@ def verify_retrieval(
         evidence_count >= minimum_results
         and relevance_score >= relevance_threshold
     )
-
-
-    if sufficient:
-
-        reason = (
-            "Retrieved evidence passes "
-            "baseline relevance and "
-            "evidence-count checks."
+    if strict_coverage and is_table_question:
+        has_table = any(
+            isinstance(item.get("metadata"), dict) and item["metadata"].get("content_type") == "table"
+            for item in retrieved_results
         )
-
+        if not has_table:
+            sufficient = False
+            reason = "Table evidence was required but no table chunks were retrieved."
+        elif sufficient:
+            reason = "Retrieved table evidence passes baseline verification."
+        else:
+            reason = "Retrieved evidence does not meet the baseline verification threshold."
+    elif strict_coverage and requires_multiple_sources and source_diversity < 2:
+        sufficient = False
+        reason = "Multiple documents appear required but retrieval covered only one source."
+    elif sufficient:
+        reason = "Retrieved evidence passes baseline relevance and evidence-count checks."
     else:
-
-        reason = (
-            "Retrieved evidence does not "
-            "meet the baseline verification "
-            "threshold."
-        )
+        reason = "Retrieved evidence does not meet the baseline verification threshold."
 
 
     return VerificationResult(
