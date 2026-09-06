@@ -1,0 +1,5 @@
+Mode,Questions,Mean_Initial_K,Mean_Final_K,Mean_Iterations,Escalation_Rate,Verification_Rate,Verification_Pass_Rate,Mean_Chunks_Retrieved,Mean_Chunks_Used,Mean_Prompt_Tokens,Mean_Generated_Tokens,Mean_Total_Tokens,Median_Total_Tokens,Mean_Total_Latency_ms,Median_Total_Latency_ms,Escalation_Rate_pct,Verification_Rate_pct,Verification_Pass_Rate_pct
+adaptive,16,6.3125,6.3125,1.0,0.0,1.0,1.0,6.3125,6.3125,2333.9375,231.6875,2565.625,2767.5,107280.18121248533,46760.36040001782,0.0,100.0,100.0
+fixed_10,16,10.0,10.0,1.0,0.0,0.0,,10.0,10.0,2712.1875,377.625,3089.8125,2562.0,163684.37466250907,163717.3577999638,0.0,0.0,
+fixed_3,16,3.0,3.0,1.0,0.0,0.0,,3.0,3.0,1226.0,134.625,1360.625,1249.0,66164.90851872732,69389.85659996979,0.0,0.0,
+fixed_5,16,5.0,5.0,1.0,0.0,0.0,,5.0,5.0,2002.9375,171.25,2174.1875,2251.0,62436.26376875909,57866.777750023175,0.0,0.0,

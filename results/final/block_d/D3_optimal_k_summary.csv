@@ -1,0 +1,12 @@
+Metric,Value
+Questions,100.0
+Mean_Candidate_Optimal_K,5.91
+Median_Candidate_Optimal_K,7.0
+Minimum_Candidate_Optimal_K,1.0
+Maximum_Candidate_Optimal_K,10.0
+Mean_Best_K_Quality,0.5481984779085358
+Mean_Quality_Threshold,0.5281984779085357
+Mean_Candidate_Quality,0.5441183605394341
+Mean_Maximum_K_Quality,0.5384516981007059
+Mean_Estimated_Token_Savings,0.3534891219011229
+Mean_Estimated_Latency_Savings,0.35178533667380846

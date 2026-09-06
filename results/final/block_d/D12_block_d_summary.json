@@ -1,0 +1,18 @@
+{
+  "block": "D",
+  "controlled_questions": 16,
+  "controlled_records": 64,
+  "quality_questions": 100,
+  "quality_records": 959,
+  "candidate_optimal_k_mean": 5.91,
+  "candidate_optimal_k_median": 7.0,
+  "adaptive_initial_k_mean": 6.3125,
+  "adaptive_initial_k_median": 7.5,
+  "adaptive_k_min": 1,
+  "adaptive_k_max": 10,
+  "adaptive_escalation_rate": 0.0,
+  "adaptive_verification_rate": 1.0,
+  "quality_at_k_3": 0.4353831778845775,
+  "quality_at_k_5": 0.4794552128310813,
+  "quality_at_k_10": 0.5548515386024807
+}

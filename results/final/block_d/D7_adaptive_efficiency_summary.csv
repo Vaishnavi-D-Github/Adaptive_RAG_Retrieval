@@ -1,0 +1,4 @@
+Comparison,Mean_Token_Savings_pct,Median_Token_Savings_pct,Questions_With_Token_Savings,Mean_Latency_Savings_pct,Median_Latency_Savings_pct,Questions_With_Latency_Savings,Mean_Chunk_Savings_pct,Median_Chunk_Savings_pct
+Adaptive_vs_Fixed_K3,-98.25826093206157,-85.07836013414739,3,-62.283943049840694,19.161554952819635,9,-110.41666666666666,-150.0
+Adaptive_vs_Fixed_K5,-20.070537078886986,-24.147482224035436,5,-54.47971148150573,3.142077310854046,8,-26.25,-50.0
+Adaptive_vs_Fixed_K10,14.903423487875738,24.160263819949684,11,33.05320379803226,63.09059290221033,10,36.875,25.0
