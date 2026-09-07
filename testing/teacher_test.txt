@@ -1,0 +1,5 @@
+Teacher Access Control Test Document
+
+This document contains information that should only be available to teachers and office users.
+
+The teacher-only access test code is TEACHER_ONLY_456.

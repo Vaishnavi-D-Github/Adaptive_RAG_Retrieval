@@ -1,0 +1,75 @@
+GENERATION EXPERIMENT AUDIT REPORT
+================================================================================
+
+Input file: results/final_k_experiment_qwen3.csv
+Total records: 1000
+Unique questions: 100
+K values: [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5), np.int64(6), np.int64(7), np.int64(8), np.int64(9), np.int64(10)]
+Models: ['Qwen/Qwen3-8B']
+
+GENERATION STATUS
+--------------------------------------------------------------------------------
+Successful generations: 959
+Failed generations: 41
+Failure rate: 4.10%
+
+FAILURES BY K
+--------------------------------------------------------------------------------
+ K  Total_Runs  Failures  Successful  Failure_Rate_Percent
+ 1         100         0         100                   0.0
+ 2         100         0         100                   0.0
+ 3         100         0         100                   0.0
+ 4         100         0         100                   0.0
+ 5         100         0         100                   0.0
+ 6         100         0         100                   0.0
+ 7         100         0         100                   0.0
+ 8         100         2          98                   2.0
+ 9         100        10          90                  10.0
+10         100        29          71                  29.0
+
+K-WISE PERFORMANCE
+--------------------------------------------------------------------------------
+ K  Runs  Successful  Failed  Failure_Rate_Percent  Avg_Prompt_Tokens  Avg_Generated_Tokens  Avg_Total_Tokens  Avg_Generation_Time  Median_Generation_Time  Max_Generation_Time  Potentially_Truncated
+ 1   100         100       0                   0.0             539.74                 77.56            617.30             8.103512                7.667761            21.447371                      0
+ 2   100         100       0                   0.0             983.02                 95.00           1078.02            10.379523                9.841142            26.025537                      1
+ 3   100         100       0                   0.0            1423.71                104.91           1528.62            12.112251               12.323572            26.924927                      3
+ 4   100         100       0                   0.0            1879.51                104.45           1983.96            13.336310               13.072557            29.796234                      2
+ 5   100         100       0                   0.0            2314.22                114.21           2428.43            16.039341               15.956956            35.250845                      7
+ 6   100         100       0                   0.0            2723.97                114.73           2838.70            18.084144               17.474771            42.992725                      4
+ 7   100         100       0                   0.0            3172.95                119.39           3292.34            21.145056               20.083386            49.848826                      6
+ 8   100          98       2                   2.0            3564.96                118.18           3683.14            23.612901               22.494772            53.760477                      8
+ 9   100          90      10                  10.0            3596.67                111.25           3707.92            24.173156               25.318828            54.092460                      9
+10   100          71      29                  29.0            3014.81                 88.34           3103.15            20.421467               22.371945            54.857442                      8
+
+TRUNCATION
+--------------------------------------------------------------------------------
+Potentially truncated: 48
+
+RETRIEVAL CONSISTENCY
+--------------------------------------------------------------------------------
+Retrieval count mismatches: 0
+
+ANSWERABLE / UNANSWERABLE
+--------------------------------------------------------------------------------
+Answerable  Runs  Failures  Failure_Rate_Percent  Avg_Prompt_Tokens  Avg_Generation_Time
+        No   100         6              6.000000        2254.220000             7.389120
+       Yes   900        35              3.888889        2328.815556            17.779838
+
+COMPLEXITY
+--------------------------------------------------------------------------------
+Complexity  Runs  Failures  Failure_Rate_Percent  Avg_Prompt_Tokens  Avg_Generation_Time
+      High   300        16              5.333333        2365.553333            20.522481
+       Low   350         6              1.714286        2331.437143            13.432757
+    Medium   350        19              5.428571        2273.391429            16.807305
+
+PRIMARY CATEGORY
+--------------------------------------------------------------------------------
+               Primary_Category  Runs  Failures  Failure_Rate_Percent  Avg_Prompt_Tokens  Avg_Generation_Time
+                     Comparison   150         9              6.000000        2220.020000            22.793747
+Unanswerable / Out-of-Knowledge   100         6              6.000000        2254.220000             7.389120
+                     Procedural   150         7              4.666667        2427.080000            20.734168
+                        Factual   150         7              4.666667        2405.600000             9.292337
+                 Multi-document   100         4              4.000000        2473.060000            20.436119
+                        Summary   100         3              3.000000        2170.550000            22.453835
+                         Policy   150         4              2.666667        2386.313333            14.808735
+                     Definition   100         1              1.000000        2157.210000            15.685106

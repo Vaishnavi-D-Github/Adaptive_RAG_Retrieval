@@ -136,7 +136,7 @@ if __name__ == "__main__":
 
     print("\nRetrieving documents...")
 
-    K = 1
+    K = 10
 
     results = retrieve_documents(
         question,

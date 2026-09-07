@@ -1,0 +1,5 @@
+Office Access Control Test Document
+
+This document contains information restricted to office users and administrators.
+
+The office-only access test code is OFFICE_ONLY_789.

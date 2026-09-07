@@ -1,0 +1,20 @@
+{
+  "timestamp": "2026-08-29T09:04:32.393430+00:00",
+  "random_state": 42,
+  "evaluation_unit": "unique_question",
+  "models": {
+    "XGBoost_Engineered": {
+      "exact_k_accuracy": 0.1,
+      "within_plus_minus_1_accuracy": 0.32,
+      "within_plus_minus_2_accuracy": 0.52,
+      "mae": 2.87
+    },
+    "XGBoost_Engineered_Embedding": {
+      "exact_k_accuracy": 0.12,
+      "within_plus_minus_1_accuracy": 0.25,
+      "within_plus_minus_2_accuracy": 0.44,
+      "mae": 2.68
+    }
+  },
+  "important_note": "All metrics are out-of-fold metrics. No post-retrieval information is used as an initial-K feature."
+}
